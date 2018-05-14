@@ -171,6 +171,15 @@ int btc_tokenizer_scan_punctuator(btc_tokenizer* tokenizer){
     return 0;
 }
 
+int btc_tokenizer_is_keyword(btc_tokenizer* tokenizer) {
+    if(!btc_tokenizer_is_identifier_start(tokenizer))
+        return 0;
+
+    if(btc_tokenizer_compare(tokenizer, "type"))
+        return 1;
+    return 0;
+}
+
 int btc_tokenizer_identify(btc_tokenizer* tokenizer) {
     uint8_t ch = tokenizer->buffer[tokenizer->offset];
 
