@@ -140,6 +140,7 @@ void btc_tokenizer_scan_identifier(btc_tokenizer* tokenizer) {
     size_t total_characters = (end_offset - start_offset);
     char* buffer = malloc(total_characters*sizeof(char));
     memcpy(buffer, &tokenizer->string[start_offset], total_characters);
+    buffer[total_characters] = '\0';
 
     btc_token* token;
     btc_token_init(&token, BTC_TOKEN_IDENTIFIER);
@@ -157,8 +158,9 @@ int btc_tokenizer_scan_punctuator(btc_tokenizer* tokenizer){
         token->value = "->";
         tokenizer->offset += 2;
     } else {
-        char* buffer = malloc(1);
+        char* buffer = malloc(2);
         buffer[0] = tokenizer->string[tokenizer->offset];
+        buffer[1] = '\0';
 
         token->value = buffer;
         token->allocated = buffer;
