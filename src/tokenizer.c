@@ -177,6 +177,32 @@ int btc_tokenizer_is_keyword(btc_tokenizer* tokenizer) {
     return 0;
 }
 
+void btc_tokenizer_scan_keyword(btc_tokenizer* tokenizer) {
+    size_t start_offset = tokenizer->offset;
+
+    do {
+        tokenizer->offset++;
+    } while(!btc_tokenizer_eof(tokenizer) && btc_tokenizer_is_identifier_part(tokenizer));
+
+    size_t end_offset = tokenizer->offset;
+
+    if(end_offset == start_offset)
+        fprintf(stderr, "unexpected token \"%c\"\n", tokenizer->string[start_offset]);
+
+    size_t characters_length = (end_offset - start_offset)*sizeof(char);
+    char* buffer = malloc(characters_length + 1);
+    strncpy(buffer, &tokenizer->string[start_offset], characters_length);
+    buffer[characters_length] = '\0';
+
+    btc_token* token;
+    btc_token_init(&token, BTC_TOKEN_KEYWORD);
+
+    token->value = buffer;
+    token->allocated = buffer;
+
+    btc_tokenizer_push_token(tokenizer, token);
+}
+
 int btc_tokenizer_identify(btc_tokenizer* tokenizer) {
     uint8_t ch = tokenizer->buffer[tokenizer->offset];
 
