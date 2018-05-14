@@ -21,12 +21,12 @@ void expect_punctuator(btc_token* token, const char* string) {
     expect_token(token, string, BTC_TOKEN_PUNCTUATOR);
 }
 
-void test_tokenizer() {
+void test_tokenizer_simple_container_group() {
     btc_tokenizer* tokenizer;
     btc_tokenizer_init(&tokenizer);
 
     btc_tokenizer_scan(tokenizer, "type User {\
-        user -> id: uint;\
+        user -> id: uint32;\
     }");
 
     btc_token* token = tokenizer->first_token;
@@ -51,7 +51,7 @@ void test_tokenizer() {
     expect_punctuator(token, ":");
 
     token = token->next_token;
-    expect_identifier(token, "uint");
+    expect_identifier(token, "uint32");
 
     token = token->next_token;
     expect_punctuator(token, ";");
@@ -60,4 +60,75 @@ void test_tokenizer() {
     expect_punctuator(token, "}");
 
     btc_tokenizer_destroy(tokenizer);
+}
+
+void test_tokenizer_namespace() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "\
+        namespace users {\
+            type User {\
+                user -> id: uint32, name: string\
+            }\
+        }\
+    ");
+
+    btc_token* token = tokenizer->first_token;
+    expect_keyword(token, "namespace");
+
+    token = token->next_token;
+    expect_identifier(token, "users");
+
+    token = token->next_token;
+    expect_punctuator(token, "{");
+
+    token = token->next_token;
+    expect_keyword(token, "type");
+
+    token = token->next_token;
+    expect_identifier(token, "User");
+
+    token = token->next_token;
+    expect_punctuator(token, "{");
+
+    token = token->next_token;
+    expect_identifier(token, "user");
+
+    token = token->next_token;
+    expect_punctuator(token, "->");
+
+    token = token->next_token;
+    expect_identifier(token, "id");
+
+    token = token->next_token;
+    expect_punctuator(token, ":");
+
+    token = token->next_token;
+    expect_identifier(token, "uint32");
+
+    token = token->next_token;
+    expect_punctuator(token, ",");
+
+    token = token->next_token;
+    expect_identifier(token, "name");
+
+    token = token->next_token;
+    expect_punctuator(token, ":");
+
+    token = token->next_token;
+    expect_identifier(token, "string");
+
+    token = token->next_token;
+    expect_punctuator(token, "}");
+
+    token = token->next_token;
+    expect_punctuator(token, "}");
+
+    btc_tokenizer_destroy(tokenizer);
+}
+
+void test_tokenizer() {
+    test_tokenizer_namespace();
+    test_tokenizer_simple_container_group();
 }
