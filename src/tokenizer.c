@@ -42,13 +42,10 @@ int btc_tokenizer_is_identifier_start(btc_tokenizer* tokenizer){
  * Returns 0 if found any match, 1 if none are found
  */
 int btc_tokenizer_compare(btc_tokenizer* tokenizer, const char* token) {
-    size_t token_length = strlen(token);
-    size_t offset = tokenizer->offset;
-    for(int i = 0; i < token_length; i++) {
-        if(token[i] != tokenizer->string[i + offset])
-            return 0;
-    }
-    return 1;
+    if(strncmp(&tokenizer->string[tokenizer->offset], token, strlen(token)) == 0)
+        return 1;
+
+    return 0;
 }
 
 void btc_tokenizer_push_token(btc_tokenizer* tokenizer, btc_token* token) {
