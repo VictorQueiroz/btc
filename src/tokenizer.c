@@ -123,9 +123,9 @@ int btc_tokenizer_is_identifier_part(btc_tokenizer* tokenizer) {
 void btc_tokenizer_scan_identifier(btc_tokenizer* tokenizer) {
     size_t start_offset = tokenizer->offset;
 
-    while(btc_tokenizer_is_identifier_part(tokenizer) == 1 && btc_tokenizer_eof(tokenizer) != 1) {
+    do {
         ++tokenizer->offset;
-    }
+    } while(btc_tokenizer_is_identifier_part(tokenizer) == 1 && btc_tokenizer_eof(tokenizer) != 1);
 
     size_t end_offset = tokenizer->offset;
 
