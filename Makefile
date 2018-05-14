@@ -1,17 +1,18 @@
 CC=gcc
 SRC_DIR=$(PWD)/src
 TEST_DIR=$(PWD)/test
-DEPS=$(SRC_DIR)/tokenizer.c
-TEST_TARGETS=$(TEST_DIR)/test_tokenizer.c $(TEST_DIR)/test.c
+LIBS_DIR=$(PWD)/build/libs
+DEPS=$(SRC_DIR)/tokenizer.c $(SRC_DIR)/parser.c
+TEST_TARGETS=$(TEST_DIR)/test_tokenizer.c $(TEST_DIR)/test_parser.c $(TEST_DIR)/test.c
 
 all: btc
 
-btc.o:
-	mkdir -p build/obj
-	$(CC) -c -g $(DEPS) -o build/obj/btc.o -Wall
+libbtc.so:
+	mkdir -p $(LIBS_DIR)
+	$(CC) -shared -g $(DEPS) -o $(LIBS_DIR)/libbtc.so -Wall -fPIC
 
-test: btc.o
-	$(CC) -g -o build/test $(TEST_TARGETS) build/obj/btc.o -I$(SRC_DIR)
+test: libbtc.so
+	$(CC) -g -Wl,-rpath=$(LIBS_DIR) -o build/test $(TEST_TARGETS) -I$(SRC_DIR) -lbtc -L$(LIBS_DIR)
 	./build/test
 
 memcheck: test
