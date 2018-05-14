@@ -206,9 +206,8 @@ void btc_tokenizer_scan_keyword(btc_tokenizer* tokenizer) {
 int btc_tokenizer_identify(btc_tokenizer* tokenizer) {
     uint8_t ch = tokenizer->buffer[tokenizer->offset];
 
-    if(btc_tokenizer_compare(tokenizer, "type")) {
-        btc_tokenizer_push_keyword(tokenizer, "type");
-        tokenizer->offset += strlen("type");
+    if(btc_tokenizer_is_keyword(tokenizer)) {
+        btc_tokenizer_scan_keyword(tokenizer);
     } else if(btc_tokenizer_is_identifier_start(tokenizer)) {
         btc_tokenizer_scan_identifier(tokenizer);
     } else if(ch == 0x20) { // whitespace
