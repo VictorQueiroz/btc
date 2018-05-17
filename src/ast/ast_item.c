@@ -20,6 +20,7 @@ void btc_destroy_ast_item(btc_ast_item* item) {
             break;
         case BTC_NAMESPACE:
             btc_destroy_namespace(item->namespace);
+            break;
         case BTC_IMPORT_DECLARATION:
         case BTC_IDENTIFIER:
             break;
