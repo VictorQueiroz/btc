@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 void btc_initialize_namespace(btc_namespace** namespace_ptr) {
-    *namespace_ptr = malloc(sizeof(btc_namespace));
+    *namespace_ptr = calloc(1, sizeof(btc_namespace));
     btc_namespace* namespace = *namespace_ptr;
 
     btc_ast_list* body;
