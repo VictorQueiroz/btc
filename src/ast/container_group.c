@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 void btc_create_container_group(btc_ast_container_group_declaration** group_ptr) {
-    *group_ptr = malloc(sizeof(btc_ast_container_group_declaration));
+    *group_ptr = calloc(1, sizeof(btc_ast_container_group_declaration));
     btc_ast_container_group_declaration* group = *group_ptr;
     btc_create_containers_list(&group->body);
 }
