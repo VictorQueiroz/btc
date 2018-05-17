@@ -145,7 +145,7 @@ int btc_tokenizer_scan_punctuator(btc_tokenizer* tokenizer){
         token->value = "->";
         tokenizer->offset += 2;
     } else {
-        char* buffer = malloc(2);
+        char* buffer = calloc(1, 2*sizeof(char));
         buffer[0] = tokenizer->string[tokenizer->offset];
         buffer[1] = '\0';
 
