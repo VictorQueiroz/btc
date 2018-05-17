@@ -8,8 +8,6 @@ void btc_parser_init(btc_parser** parser_ptr, btc_tokenizer* tokenizer) {
     *parser_ptr = calloc(1, sizeof(btc_parser));
 
     btc_parser* parser = *parser_ptr;
-    parser->last_item = NULL;
-    parser->first_item = NULL;
     parser->current_token = tokenizer->first_token;
 }
 
