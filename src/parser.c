@@ -87,6 +87,27 @@ int btc_parser_eof(btc_parser* parser) {
     return 1;
 }
 
+btc_string btc_consume_string(btc_parser* parser, int* error) {
+    btc_token* token;
+    btc_parser_consume(parser, &token);
+    btc_string result = {};
+
+    if(token->type != BTC_TOKEN_LITERAL_STRING) {
+        if(error != NULL) {
+            *error = BTC_UNEXPECTED_TOKEN;
+        }
+        return result;
+    }
+
+    if(error != NULL) {
+        *error = BTC_OK;
+    }
+
+    result.value = token->value;
+
+    return result;
+}
+
 /**
  * scan ast into `result` 
  */
