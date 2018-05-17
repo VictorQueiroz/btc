@@ -108,6 +108,10 @@ btc_string btc_consume_string(btc_parser* parser, int* error) {
     return result;
 }
 
+int btc_parser_status(btc_parser* parser){
+    return parser->status;
+}
+
 /**
  * scan ast into `result` 
  */
