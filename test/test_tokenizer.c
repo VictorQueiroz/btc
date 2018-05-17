@@ -21,6 +21,10 @@ void expect_punctuator(btc_token* token, const char* string) {
     expect_token(token, string, BTC_TOKEN_PUNCTUATOR);
 }
 
+void expect_literal_string(btc_token* token, const char* string) {
+    expect_token(token, string, BTC_TOKEN_LITERAL_STRING);
+}
+
 void test_tokenizer_simple_container_group() {
     btc_tokenizer* tokenizer;
     btc_tokenizer_init(&tokenizer);
@@ -128,7 +132,25 @@ void test_tokenizer_namespace() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_tokenizer_string() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "\
+        import \"./default.schema.txt\";\
+    ");
+
+    btc_token* token = tokenizer->first_token;
+    expect_keyword(token, "import");
+
+    token = token->next_token;
+    expect_literal_string(token, "./default.schema.txt");
+
+    btc_tokenizer_destroy(tokenizer);
+}
+
 void test_tokenizer() {
     test_tokenizer_namespace();
     test_tokenizer_simple_container_group();
+    test_tokenizer_string();
 }

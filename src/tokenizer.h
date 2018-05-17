@@ -11,7 +11,7 @@ extern "C" {
 #define BTC_TOKEN_PUNCTUATOR 1
 #define BTC_TOKEN_IDENTIFIER 2
 #define BTC_TOKEN_KEYWORD 3
-#define BTC_TOKEN_LITERAL 4
+#define BTC_TOKEN_LITERAL_STRING 4
 
 struct _btc_token {
     int type;
