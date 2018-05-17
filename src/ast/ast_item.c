@@ -6,6 +6,12 @@
 
 void btc_destroy_ast_item(btc_ast_item* item) {
     switch(item->type) {
+        /**
+         * This ast is empty, therefore we assume there's no 
+         * data allocated in it
+         */
+        case 0:
+            break;
         case BTC_CONTAINER_GROUP:
             btc_destroy_container_group(item->container_group);
             break;
