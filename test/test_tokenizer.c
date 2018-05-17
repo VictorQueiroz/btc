@@ -149,6 +149,36 @@ void test_tokenizer_string() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_tokenizer_test_template() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "vector<vector<uint32>>");
+
+    btc_token* token = tokenizer->first_token;
+    expect_identifier(token, "vector");
+
+    token = token->next_token;
+    expect_punctuator(token, "<");
+
+    token = token->next_token;
+    expect_identifier(token, "vector");
+
+    token = token->next_token;
+    expect_punctuator(token, "<");
+
+    token = token->next_token;
+    expect_identifier(token, "uint32");
+
+    token = token->next_token;
+    expect_punctuator(token, ">");
+
+    token = token->next_token;
+    expect_punctuator(token, ">");
+
+    btc_tokenizer_destroy(tokenizer);
+}
+
 void test_tokenizer_member_expression() {
     btc_tokenizer* tokenizer;
     btc_tokenizer_init(&tokenizer);
@@ -172,4 +202,5 @@ void test_tokenizer() {
     test_tokenizer_simple_container_group();
     test_tokenizer_string();
     test_tokenizer_member_expression();
+    test_tokenizer_test_template();
 }
