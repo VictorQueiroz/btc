@@ -5,10 +5,11 @@ typedef struct _btc_ast_container_param btc_ast_container_param;
 typedef struct _btc_ast_container_params btc_ast_container_params;
 
 #include "parser_identifier.h"
+#include "ast_item.h"
 
 struct _btc_ast_container_param {
     btc_ast_identifier name;
-    btc_ast_identifier type;
+    btc_ast_item* type;
     btc_ast_container_param* next_param;
     btc_ast_container_param* previous_param;
 };

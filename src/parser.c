@@ -196,6 +196,44 @@ int btc_parser_peek_and_consume(btc_parser* parser, const char* string) {
     return 0;
 }
 
+void btc_parser_scan_member_expression(btc_parser* parser, btc_ast_item* output) {
+    btc_ast_item* left;
+    btc_initialize_ast_item(&left);
+    left->type = BTC_IDENTIFIER;
+    left->identifier = btc_parser_consume_identifier(parser);
+
+    while(!btc_parser_eof(parser) && btc_parser_peek_and_consume(parser, ".")) {
+        btc_member_expression* expr;
+        btc_initialize_member_expression(&expr);
+
+        btc_destroy_ast_item(expr->left);
+        expr->left = left;
+        expr->right = btc_parser_consume_identifier(parser);
+
+        if(!btc_parser_peek(parser, ".")) {
+            output->type = BTC_MEMBER_EXPRESSION;
+            output->member_expression = expr;
+            break;
+        }
+
+        btc_ast_item* next;
+        btc_initialize_ast_item(&next);
+        next->type = BTC_MEMBER_EXPRESSION;
+        next->member_expression = expr;
+        left = next;
+    }
+}
+
+void btc_parser_scan_param_type(btc_parser* parser, btc_ast_item* result) {
+    if(btc_parser_peek_from_index(parser, ".", 1)) {
+        btc_parser_scan_member_expression(parser, result);
+        return;
+    }
+
+    result->type = BTC_IDENTIFIER;
+    result->identifier = btc_parser_consume_identifier(parser);
+}
+
 void btc_parser_scan_container_short_body(btc_parser* parser, btc_ast_container_params* body) {
     do {
         btc_ast_container_param* param;
@@ -204,7 +242,7 @@ void btc_parser_scan_container_short_body(btc_parser* parser, btc_ast_container_
         param->name = btc_parser_consume_identifier(parser);
         btc_parser_expect(parser, ":");
 
-        param->type = btc_parser_consume_identifier(parser);
+        btc_parser_scan_param_type(parser, param->type);
 
         btc_add_container_param(body, param);
     } while(!btc_parser_eof(parser) && btc_parser_peek_and_consume(parser, ","));

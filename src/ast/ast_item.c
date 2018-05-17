@@ -15,6 +15,9 @@ void btc_destroy_ast_item(btc_ast_item* item) {
         case BTC_CONTAINER_GROUP:
             btc_destroy_container_group(item->container_group);
             break;
+        case BTC_MEMBER_EXPRESSION:
+            btc_destroy_member_expression(item->member_expression);
+            break;
         case BTC_NAMESPACE:
             btc_destroy_namespace(item->namespace);
         case BTC_IMPORT_DECLARATION:
