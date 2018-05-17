@@ -27,13 +27,31 @@ void btc_parser_destroy(btc_parser* parser){
 }
 
 /**
- * Check if current token has the following value
+ * Check if current token has the following value starting from `index`
  */
-int btc_parser_peek(btc_parser* parser, const char* value) {
-    if(strncmp(parser->current_token->value, value, strlen(value)) == 0)
+int btc_parser_peek_from_index(btc_parser* parser, const char* value, size_t index) {
+    btc_token* token = parser->current_token;
+    size_t current_index = 0;
+
+    while(current_index < index) {
+        if(token->next_token == NULL)
+            return 0;
+
+        token = token->next_token;
+        ++current_index;
+    }
+
+    if(strncmp(token->value, value, strlen(value)) == 0)
         return 1;
 
     return 0;
+}
+
+/**
+ * Check if current token has the following value
+ */
+int btc_parser_peek(btc_parser* parser, const char* value) {
+    return btc_parser_peek_from_index(parser, value, 0);
 }
 
 /**

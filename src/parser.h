@@ -20,6 +20,8 @@ void btc_parser_destroy(btc_parser* parser);
 void btc_parse(btc_parser* parser);
 int btc_parser_eof(btc_parser* parser);
 
+int btc_parser_peek_from_index(btc_parser* parser, const char* value, size_t index);
+int btc_parser_peek(btc_parser* parser, const char* value);
 int btc_parser_peek_and_consume(btc_parser* parser, const char* string);
 
 btc_ast_identifier btc_parser_consume_identifier(btc_parser* parser);
