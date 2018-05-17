@@ -17,6 +17,7 @@ void btc_parser_init(btc_parser** parser_ptr, btc_tokenizer* tokenizer) {
     btc_create_ast_list(&list);
 
     parser->result = list;
+    parser->status = BTC_OK;
     parser->current_token = tokenizer->first_token;
 }
 

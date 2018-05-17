@@ -10,6 +10,7 @@ typedef struct _btc_parser btc_parser;
 #include "ast/parser_identifier.h"
 
 struct _btc_parser {
+    int status;
     btc_ast_list* result;
     btc_token* current_token;
 };
