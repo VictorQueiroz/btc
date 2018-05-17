@@ -4,11 +4,7 @@
 #include <string.h>
 
 void btc_initialize_linked_container(btc_linked_container_declaration** linked_ptr) {
-    *linked_ptr = malloc(sizeof(btc_linked_container_declaration));
-    btc_linked_container_declaration* linked = *linked_ptr;
-    linked->container = NULL;
-    linked->previous_item = NULL;
-    linked->next_item = NULL;
+    *linked_ptr = calloc(1, sizeof(btc_linked_container_declaration));
 }
 
 void btc_destroy_linked_container(btc_linked_container_declaration* linked) {
