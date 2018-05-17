@@ -22,16 +22,16 @@ void test_container_group() {
 
     btc_parse(parser);
 
-    ast_item = parser->first_item;
+    ast_item = parser->result->first_item->value;
     assert(ast_item->type == BTC_CONTAINER_GROUP);
-    btc_ast_container_group_declaration group = ast_item->container_group;
-    assert(strncmp(group.type.value, "User", 4) == 0);
+    btc_ast_container_group_declaration* group = ast_item->container_group;
+    assert(strncmp(group->type.value, "User", 4) == 0);
 
-    btc_linked_container_declaration* linked_container = group.body->first_item;
-    assert(strncmp(linked_container->container.name.value, "user", 4) == 0);
+    btc_linked_container_declaration* linked_container = group->body->first_item;
+    assert(strncmp(linked_container->container->name.value, "user", 4) == 0);
     assert(linked_container->next_item == NULL);
 
-    btc_ast_container_param* param = linked_container->container.body->first_param;
+    btc_ast_container_param* param = linked_container->container->body->first_param;
 
     assert(strncmp(param->name.value, "id", 2)==0);
     assert(strncmp(param->type.value, "uint32", 6)==0);
@@ -43,8 +43,8 @@ void test_container_group() {
 
     assert(btc_parser_eof(parser) == 1);
 
-    btc_tokenizer_destroy(tokenizer);
     btc_parser_destroy(parser);
+    btc_tokenizer_destroy(tokenizer);
 }
 
 void test_container_namespace() {
@@ -59,6 +59,18 @@ void test_container_namespace() {
         }\
     ");
 
+    btc_parser* parser;
+    btc_parser_init(&parser, tokenizer);
+
+    btc_parse(parser);
+
+    btc_linked_ast_item* linked_item = parser->result->first_item;
+    btc_ast_item* item = linked_item->value;
+
+    assert(item->type == BTC_NAMESPACE);
+    assert(strncmp(item->namespace->name.value, "users", 5) == 0);
+
+    btc_parser_destroy(parser);
     btc_tokenizer_destroy(tokenizer);
 }
 
