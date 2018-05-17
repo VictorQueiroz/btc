@@ -257,7 +257,7 @@ int btc_tokenizer_identify(btc_tokenizer* tokenizer) {
 
 void btc_tokenizer_scan(btc_tokenizer* tokenizer, const char* string) {
     size_t string_length = strlen(string);
-    uint8_t* buffer = malloc(string_length*sizeof(char));
+    uint8_t* buffer = calloc(1, string_length*sizeof(char)+1);
     memcpy(buffer, string, string_length);
 
     tokenizer->string = string;
