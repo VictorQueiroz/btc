@@ -21,7 +21,7 @@ void btc_parser_destroy(btc_parser* parser){
  * Check if current token has the following value
  */
 int btc_parser_peek(btc_parser* parser, const char* value) {
-    if(strncmp(parser->current_token->value, value, 4) == 0)
+    if(strncmp(parser->current_token->value, value, strlen(value)) == 0)
         return 1;
 
     return 0;
