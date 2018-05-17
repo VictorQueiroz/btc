@@ -1,7 +1,3 @@
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifndef PARSER_H_
 #define PARSER_H_
 
@@ -80,6 +76,4 @@ int btc_parser_peek_and_consume(btc_parser* parser, const char* string);
 
 #endif
 
-#ifdef __cplusplus
-}
 #endif
