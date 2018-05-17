@@ -102,6 +102,83 @@ void test_container_import() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_container_template_single_argument() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "\
+        type User {\
+            user -> id: uint32, posts: Vector<Post>\
+        }\
+        type Post {\
+            post -> title: string\
+        }\
+    ");
+
+    btc_parser* parser;
+    btc_parser_init(&parser, tokenizer);
+
+    btc_parse(parser);
+
+    btc_linked_ast_item* linked_item = parser->result->first_item;
+    btc_ast_item* item = linked_item->value;
+
+    btc_ast_container_declaration* container = item->container_group->body->last_item->container;
+    btc_ast_item* param_type = container->body->last_param->type;
+    btc_template* template = param_type->template;
+    assert(param_type->type == BTC_TEMPLATE);
+    assert(strncmp(template->name.value, "Vector", strlen(template->name.value)) == 0);
+
+    assert(strncmp(template->arguments->first_item->value->identifier.value, "Post", strlen(template->arguments->first_item->value->identifier.value)) == 0);
+
+    btc_parser_destroy(parser);
+    btc_tokenizer_destroy(tokenizer);
+}
+
+void test_container_template_multiple_arguments() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "\
+        type User {\
+            user -> id: uint32, postsAndStatistics: Vector<Post, Statistic>\
+        }\
+        type Statistic {\
+            statisticPost -> hitsCount: uint32\
+        }\
+        type Post {\
+            post -> title: string\
+        }\
+    ");
+
+    btc_parser* parser;
+    btc_parser_init(&parser, tokenizer);
+
+    btc_parse(parser);
+
+    btc_linked_ast_item* linked_item = parser->result->first_item;
+    btc_ast_item* item = linked_item->value;
+
+    btc_ast_container_declaration* container = item->container_group->body->last_item->container;
+    btc_ast_item* param_type = container->body->last_param->type;
+    btc_template* template = param_type->template;
+    assert(param_type->type == BTC_TEMPLATE);
+    assert(strncmp(template->name.value, "Vector", strlen(template->name.value)) == 0);
+
+    btc_linked_ast_item* first_template_argument = template->arguments->first_item;
+    btc_linked_ast_item* second_template_argument = first_template_argument->next_item;
+    assert(strncmp(first_template_argument->value->identifier.value, "Post", strlen(first_template_argument->value->identifier.value)) == 0);
+    assert(strncmp(second_template_argument->value->identifier.value, "Statistic", strlen(second_template_argument->value->identifier.value)) == 0);
+
+    btc_parser_destroy(parser);
+    btc_tokenizer_destroy(tokenizer);
+}
+
+void test_container_template() {
+    test_container_template_single_argument();
+    test_container_template_multiple_arguments();
+}
+
 void test_container_member_expression() {
     btc_tokenizer* tokenizer;
     btc_tokenizer_init(&tokenizer);
@@ -140,6 +217,7 @@ void test_container_member_expression() {
 void test_parser() {
     test_container_group();
     test_container_import();
+    test_container_template();
     test_container_member_expression();
     test_container_namespace();
 }

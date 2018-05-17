@@ -7,6 +7,7 @@ typedef struct _btc_ast_item btc_ast_item;
 #include "namespace.h"
 #include "container_group.h"
 #include "import_declaration.h"
+#include "template.h"
 #include "member_expression.h"
 
 struct _btc_ast_item {
@@ -15,6 +16,7 @@ struct _btc_ast_item {
     btc_ast_identifier identifier;
     btc_ast_container_group_declaration* container_group;
     btc_namespace* namespace;
+    btc_template* template;
     btc_import_declaration import_declaration;
     btc_member_expression* member_expression;
 };

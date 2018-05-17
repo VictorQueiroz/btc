@@ -224,9 +224,33 @@ void btc_parser_scan_member_expression(btc_parser* parser, btc_ast_item* output)
     }
 }
 
+void btc_parser_scan_template(btc_parser* parser, btc_ast_item* result) {
+    btc_ast_identifier name = btc_parser_consume_identifier(parser);
+    btc_template* template;
+    btc_initialize_template(&template);
+
+    template->name = name;
+
+    btc_parser_expect(parser, "<");
+
+    while(btc_parser_peek_and_consume(parser, ",") || !btc_parser_peek_and_consume(parser, ">")) {
+        btc_ast_item* argument;
+        btc_initialize_ast_item(&argument);
+
+        btc_parser_scan_param_type(parser, argument);
+        btc_add_ast_item(template->arguments, argument);
+    }
+
+    result->type = BTC_TEMPLATE;
+    result->template = template;
+}
+
 void btc_parser_scan_param_type(btc_parser* parser, btc_ast_item* result) {
     if(btc_parser_peek_from_index(parser, ".", 1)) {
         btc_parser_scan_member_expression(parser, result);
+        return;
+    } else if(btc_parser_peek_from_index(parser, "<", 1)) {
+        btc_parser_scan_template(parser, result);
         return;
     }
 
