@@ -90,6 +90,8 @@ void test_container_import() {
     btc_parser* parser;
     btc_parser_init(&parser, tokenizer);
 
+    btc_parse(parser);
+
     btc_linked_ast_item* linked_item = parser->result->first_item;
     btc_ast_item* item = linked_item->value;
 

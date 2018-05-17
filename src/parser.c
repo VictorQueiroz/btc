@@ -112,6 +112,22 @@ int btc_parser_status(btc_parser* parser){
     return parser->status;
 }
 
+int btc_parser_scan_import(btc_parser* parser, btc_ast_item* result) {
+    btc_parser_consume(parser, NULL);
+
+    btc_import_declaration import = { btc_consume_string(parser, &parser->status) };
+
+    if(btc_parser_status(parser) != BTC_OK)
+        return parser->status;
+
+    btc_parser_expect(parser, ";");
+
+    result->type = BTC_IMPORT_DECLARATION;
+    result->import_declaration = import;
+
+    return BTC_OK;
+}
+
 /**
  * scan ast into `result` 
  */
@@ -120,6 +136,8 @@ int btc_parser_scan(btc_parser* parser, btc_ast_item* result) {
         btc_parser_scan_type_group_definition(parser, result);
     else if(btc_parser_peek(parser, "namespace"))
         btc_parser_scan_namespace(parser, result);
+    else if(btc_parser_peek(parser, "import"))
+        btc_parser_scan_import(parser, result);
     else {
         fprintf(stderr, "unexpected token \"%s\"\n", parser->current_token->value);
         return 1;
