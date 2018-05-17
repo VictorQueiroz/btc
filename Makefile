@@ -2,7 +2,7 @@ CC=gcc
 SRC_DIR=$(PWD)/src
 TEST_DIR=$(PWD)/test
 LIBS_DIR=$(PWD)/build/libs
-DEPS=$(SRC_DIR)/tokenizer.c $(SRC_DIR)/parser.c
+DEPS=$(wildcard $(SRC_DIR)/*.c)
 TEST_TARGETS=$(TEST_DIR)/test_tokenizer.c $(TEST_DIR)/test_parser.c $(TEST_DIR)/test.c
 
 all: btc
