@@ -74,7 +74,34 @@ void test_container_namespace() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_container_import() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "\
+        import \"./default_schema.txt\";\
+        namespace users {\
+            type User {\
+                user -> id: uint32;\
+            }\
+        }\
+    ");
+
+    btc_parser* parser;
+    btc_parser_init(&parser, tokenizer);
+
+    btc_linked_ast_item* linked_item = parser->result->first_item;
+    btc_ast_item* item = linked_item->value;
+
+    assert(item->type == BTC_IMPORT_DECLARATION);
+    assert(strncmp(item->import_declaration.path.value, "./default_schema.txt", strlen("./default_schema.txt")) == 0);
+
+    btc_parser_destroy(parser);
+    btc_tokenizer_destroy(tokenizer);
+}
+
 void test_parser() {
     test_container_group();
+    test_container_import();
     test_container_namespace();
 }
