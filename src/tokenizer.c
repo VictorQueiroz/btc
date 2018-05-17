@@ -77,8 +77,8 @@ int btc_tokenizer_is_punctuator(btc_tokenizer* tokenizer) {
     if(ch == 0x7b || ch == 0x7d)
         return 1;
 
-    // : or ; or , 
-    if(ch == 0x3a || ch == 0x3b || ch == 0x2c)
+    // : or ; or , or .
+    if(ch == 0x3a || ch == 0x3b || ch == 0x2c || ch == 0x2e)
         return 1;
 
     // ? or -

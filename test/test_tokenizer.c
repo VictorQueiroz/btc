@@ -149,8 +149,27 @@ void test_tokenizer_string() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_tokenizer_member_expression() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "posts.Post");
+
+    btc_token* token = tokenizer->first_token;
+    expect_identifier(token, "posts");
+
+    token = token->next_token;
+    expect_punctuator(token, ".");
+
+    token = token->next_token;
+    expect_identifier(token, "Post");
+
+    btc_tokenizer_destroy(tokenizer);
+}
+
 void test_tokenizer() {
     test_tokenizer_namespace();
     test_tokenizer_simple_container_group();
     test_tokenizer_string();
+    test_tokenizer_member_expression();
 }
