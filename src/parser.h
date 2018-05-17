@@ -1,8 +1,6 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 
-#define BTC_OK 1
-
 typedef struct _btc_parser btc_parser;
 
 #include "btc.h"
