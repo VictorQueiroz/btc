@@ -5,10 +5,11 @@
 
 typedef struct _btc_parser btc_parser;
 
+#include "btc.h"
 #include "tokenizer.h"
-#include "ast_item.h"
-#include "container_group.h"
-#include "parser_identifier.h"
+#include "ast/ast_item.h"
+#include "ast/container_group.h"
+#include "ast/parser_identifier.h"
 
 struct _btc_parser {
     btc_ast_list* result;

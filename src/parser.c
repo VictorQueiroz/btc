@@ -1,12 +1,12 @@
 #include "tokenizer.h"
 #include "parser.h"
+#include "ast/container_params.h"
+#include "ast/container_declaration.h"
+#include "ast/namespace.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "container_params.h"
-#include "container_declaration.h"
-#include "namespace.h"
 
 void btc_parser_init(btc_parser** parser_ptr, btc_tokenizer* tokenizer) {
     *parser_ptr = calloc(1, sizeof(btc_parser));
