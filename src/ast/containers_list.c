@@ -34,8 +34,7 @@ void btc_add_container_declaration(btc_ast_containers_list* list, btc_ast_contai
 }
 
 void btc_create_containers_list(btc_ast_containers_list** containers_ptr) {
-    *containers_ptr = malloc(sizeof(btc_ast_containers_list));
-    memset(*containers_ptr, 0, sizeof(btc_ast_containers_list));
+    *containers_ptr = calloc(1, sizeof(btc_ast_containers_list));
 }
 
 void btc_destroy_containers_list(btc_ast_containers_list* list) {
