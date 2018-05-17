@@ -4,26 +4,14 @@
 #include <stdio.h>
 
 void btc_tokenizer_init(btc_tokenizer** tokenizer_ptr){
-    *tokenizer_ptr = malloc(sizeof(btc_tokenizer));
-
-    btc_tokenizer* tokenizer = *tokenizer_ptr;
-    tokenizer->buffer = NULL;
-    tokenizer->string = "";
-    tokenizer->offset = 0;
-    tokenizer->first_token = NULL;
-    tokenizer->last_token = NULL;
-    tokenizer->string_length = 0;
+    *tokenizer_ptr = calloc(1, sizeof(btc_tokenizer));
 }
 
 void btc_token_init(btc_token** token_ptr, int type){
-    *token_ptr = malloc(sizeof(btc_token));
-    btc_token* token = *token_ptr;
+    *token_ptr = calloc(1, sizeof(btc_token));
 
+    btc_token* token = *token_ptr;
     token->type = type;
-    token->next_token = NULL;
-    token->allocated = NULL;
-    token->value = "";
-    token->previous_token = NULL;
 }
 
 int btc_tokenizer_is_identifier_start(btc_tokenizer* tokenizer){
@@ -135,7 +123,7 @@ void btc_tokenizer_scan_identifier(btc_tokenizer* tokenizer) {
     }
 
     size_t total_characters = (end_offset - start_offset);
-    char* buffer = malloc(total_characters*sizeof(char));
+    char* buffer = calloc(1, total_characters*sizeof(char)+1);
     memcpy(buffer, &tokenizer->string[start_offset], total_characters);
     buffer[total_characters] = '\0';
 
