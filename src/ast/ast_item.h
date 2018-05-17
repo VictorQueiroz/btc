@@ -10,6 +10,7 @@ typedef struct _btc_ast_item btc_ast_item;
 struct _btc_ast_item {
     int type;
 
+    btc_ast_identifier identifier;
     btc_ast_container_group_declaration* container_group;
     btc_namespace* namespace;
 };
