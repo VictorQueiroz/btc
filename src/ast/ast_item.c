@@ -22,10 +22,5 @@ void btc_destroy_ast_item(btc_ast_item* item) {
 }
 
 void btc_initialize_ast_item(btc_ast_item** ast_item_ptr) {
-    *ast_item_ptr = malloc(sizeof(btc_ast_item));
-
-    btc_ast_item* ast_item = *ast_item_ptr;
-    ast_item->type = 0;
-    ast_item->namespace = NULL;
-    ast_item->container_group = NULL;
+    *ast_item_ptr = calloc(1, sizeof(btc_ast_item));
 }
