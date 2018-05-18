@@ -1,5 +1,6 @@
 #include "ast_item.h"
 #include "container_group.h"
+#include "template.h"
 
 #include <stdlib.h>
 #include <stdio.h>
