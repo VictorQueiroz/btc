@@ -25,6 +25,10 @@ void expect_literal_string(btc_token* token, const char* string) {
     expect_token(token, string, BTC_TOKEN_LITERAL_STRING);
 }
 
+void expect_comment(btc_token* token, const char* string){
+    expect_token(token, string, BTC_TOKEN_COMMENT);
+}
+
 void test_tokenizer_simple_container_group() {
     btc_tokenizer* tokenizer;
     btc_tokenizer_init(&tokenizer);
@@ -197,10 +201,29 @@ void test_tokenizer_member_expression() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_tokenizer_test_comment() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "\
+    /**\
+     * test comment \
+     */\
+    ");
+
+    btc_token* token = tokenizer->first_token;
+    expect_comment(token, "*\
+     * test comment \
+     ");
+
+    btc_tokenizer_destroy(tokenizer);
+}
+
 void test_tokenizer() {
     test_tokenizer_namespace();
     test_tokenizer_simple_container_group();
     test_tokenizer_string();
     test_tokenizer_member_expression();
     test_tokenizer_test_template();
+    test_tokenizer_test_comment();
 }
