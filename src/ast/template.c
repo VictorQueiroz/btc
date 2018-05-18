@@ -10,4 +10,5 @@ void btc_initialize_template(btc_template** tmpl_ptr) {
 
 void btc_destroy_template(btc_template* tmpl) {
     btc_destroy_ast_list(tmpl->arguments);
+    free(tmpl);
 }
