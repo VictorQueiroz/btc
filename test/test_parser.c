@@ -12,7 +12,7 @@ void test_container_group() {
 
     btc_tokenizer_scan(tokenizer, "\
         type User {\
-            user -> id: uint32, name: string;\
+            user -> uint32 id, string name;\
         }\
     ");
 
@@ -54,7 +54,7 @@ void test_container_namespace() {
     btc_tokenizer_scan(tokenizer, "\
         namespace users {\
             type User {\
-                user -> id: uint32\
+                user -> uint32 id\
             }\
         }\
     ");
@@ -82,7 +82,7 @@ void test_container_import() {
         import \"./default_schema.txt\";\
         namespace users {\
             type User {\
-                user -> id: uint32;\
+                user -> uint32 id;\
             }\
         }\
     ");
@@ -108,10 +108,10 @@ void test_container_template_single_argument() {
 
     btc_tokenizer_scan(tokenizer, "\
         type User {\
-            user -> id: uint32, posts: Vector<Post>\
+            user -> uint32 id, Vector<Post> posts\
         }\
         type Post {\
-            post -> title: string\
+            post -> string title\
         }\
     ");
 
@@ -141,13 +141,13 @@ void test_container_template_multiple_arguments() {
 
     btc_tokenizer_scan(tokenizer, "\
         type User {\
-            user -> id: uint32, postsAndStatistics: Vector<Post, Statistic>\
+            user -> uint32 id, Vector<Post, Statistic> postsAndStatistics\
         }\
         type Statistic {\
-            statisticPost -> hitsCount: uint32\
+            statisticPost -> uint32 hitsCount\
         }\
         type Post {\
-            post -> title: string\
+            post -> string title\
         }\
     ");
 
@@ -185,11 +185,11 @@ void test_container_member_expression() {
 
     btc_tokenizer_scan(tokenizer, "\
         type User {\
-            user -> id: uint32, lastPost: posts.Post\
+            user -> uint32 id, posts.Post lastPost\
         }\
         namespace posts {\
             type Post {\
-                post -> title: string\
+                post -> string title\
             }\
         }\
     ");
@@ -221,8 +221,8 @@ void test_container_declaration() {
     btc_tokenizer_scan(tokenizer, "\
         type User {\
             user {\
-                id: uint32;\
-                lastPost: Post;\
+                uint32 id;\
+                Post lastPost;\
             }\
         }\
     ");
