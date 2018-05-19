@@ -274,10 +274,9 @@ int btc_parser_scan_container_short_param(btc_parser* parser, btc_ast_item* body
     body->type = BTC_CONTAINER_PARAM;
     body->container_param = param;
 
-    param->name = btc_parser_consume_identifier(parser);
-    btc_parser_expect(parser, ":");
-
     btc_parser_scan_param_type(parser, param->type);
+
+    param->name = btc_parser_consume_identifier(parser);
 
     return BTC_OK;
 }
@@ -306,10 +305,10 @@ int btc_parser_scan_container_param(btc_parser* parser, btc_ast_item* result) {
     btc_ast_container_param* param;
     btc_initialize_container_param(&param);
 
+    btc_parser_scan_param_type(parser, param->type);
+
     param->name = btc_parser_consume_identifier(parser);
 
-    btc_parser_expect(parser, ":");
-    btc_parser_scan_param_type(parser, param->type);
     btc_parser_peek_and_consume(parser, ";");
 
     if(status != BTC_OK)
