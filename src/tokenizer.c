@@ -256,11 +256,69 @@ int btc_tokenizer_scan_comment(btc_tokenizer* tokenizer, const char* initializer
     return BTC_OK;
 }
 
+int btc_tokenizer_is_number_part(btc_tokenizer* tokenizer) {
+    uint8_t ch = tokenizer->buffer[tokenizer->offset];
+
+    // .
+    if(ch == 0x2E)
+        return 1;
+
+    return btc_tokenizer_is_number(tokenizer);
+}
+
+int btc_tokenizer_is_number_start(btc_tokenizer* tokenizer){
+    size_t offset = tokenizer->offset;
+    uint8_t ch = tokenizer->buffer[offset];
+
+    // - or +
+    if(ch_is_number_start(ch)) {
+        int only_ch = offset == (tokenizer->string_length - 1) ? 1 : 0;
+
+        if(only_ch || !ch_is_number(tokenizer->buffer[offset + 1]))
+            return 0;
+
+        return 1;
+    }
+
+    return btc_tokenizer_is_number(tokenizer);
+}
+
+void btc_tokenizer_scan_number(btc_tokenizer* tokenizer) {
+    size_t start_offset = tokenizer->offset;
+
+    if(btc_tokenizer_is_number_start(tokenizer))
+        ++tokenizer->offset;
+
+    while(!btc_tokenizer_eof(tokenizer) && btc_tokenizer_is_number_part(tokenizer)) {
+        ++tokenizer->offset;
+    }
+
+    size_t end_offset = tokenizer->offset;
+
+    if(start_offset == end_offset) {
+        fprintf(stderr, "unexpected end of number\n");
+        return;
+    }
+
+    char* number_string = calloc(1, sizeof(char)*(end_offset - start_offset)+1);
+    memcpy(number_string, &tokenizer->string[start_offset], end_offset - start_offset);
+
+    btc_token* token;
+    btc_token_init(&token, BTC_TOKEN_LITERAL_NUMBER);
+
+    token->number = atof(number_string);
+    token->allocated = number_string;
+
+    btc_tokenizer_push_token(tokenizer, token);
+}
+
 int btc_tokenizer_identify(btc_tokenizer* tokenizer) {
     uint8_t ch = tokenizer->buffer[tokenizer->offset];
 
     if(btc_tokenizer_compare(tokenizer, "/*")) {
         btc_tokenizer_scan_comment(tokenizer, "/*");
+    } else if(btc_tokenizer_is_number_start(tokenizer)) {
+        btc_tokenizer_scan_number(tokenizer);
     } else if(btc_tokenizer_is_keyword(tokenizer)) {
         btc_tokenizer_scan_keyword(tokenizer);
     } else if(ch == 0x22) { // string start

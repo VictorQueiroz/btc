@@ -13,13 +13,17 @@ extern "C" {
 #define BTC_TOKEN_KEYWORD 3
 #define BTC_TOKEN_LITERAL_STRING 4
 #define BTC_TOKEN_COMMENT 5
+#define BTC_TOKEN_LITERAL_NUMBER 6
 
 #define BTC_TOKENIZER_CONFIG_IGNORE_COMMENTS 1
 
 struct _btc_token {
     int type;
+
     const char* value;
     char* allocated;
+    double number;
+
     struct _btc_token* next_token;
     struct _btc_token* previous_token;
 };
