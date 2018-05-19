@@ -27,16 +27,16 @@ void test_container_group() {
     btc_ast_container_group_declaration* group = ast_item->container_group;
     assert(strncmp(group->type.value, "User", 4) == 0);
 
-    btc_linked_container_declaration* linked_container = group->body->first_item;
-    assert(strncmp(linked_container->container->name.value, "user", 4) == 0);
-    assert(linked_container->next_item == NULL);
+    btc_ast_container_declaration* container = group->body->first_item->value->container;
+    assert(strncmp(container->name.value, "user", 4) == 0);
 
-    btc_ast_container_param* param = linked_container->container->body->first_param;
+    btc_linked_ast_item* param_ast = container->body->first_item;
+    btc_ast_container_param* param = param_ast->value->container_param;
 
     assert(strncmp(param->name.value, "id", 2)==0);
     assert(strncmp(param->type->identifier.value, "uint32", 6)==0);
 
-    param = param->next_param;
+    param = param_ast->next_item->value->container_param;
 
     assert(strncmp(param->name.value, "name", 4)==0);
     assert(strncmp(param->type->identifier.value, "string", 6)==0);    
@@ -123,8 +123,8 @@ void test_container_template_single_argument() {
     btc_linked_ast_item* linked_item = parser->result->first_item;
     btc_ast_item* item = linked_item->value;
 
-    btc_ast_container_declaration* container = item->container_group->body->last_item->container;
-    btc_ast_item* param_type = container->body->last_param->type;
+    btc_ast_container_declaration* container = item->container_group->body->last_item->value->container;
+    btc_ast_item* param_type = container->body->last_item->value->container_param->type;
     btc_template* template = param_type->template;
     assert(param_type->type == BTC_TEMPLATE);
     assert(strncmp(template->name.value, "Vector", strlen(template->name.value)) == 0);
@@ -159,8 +159,8 @@ void test_container_template_multiple_arguments() {
     btc_linked_ast_item* linked_item = parser->result->first_item;
     btc_ast_item* item = linked_item->value;
 
-    btc_ast_container_declaration* container = item->container_group->body->last_item->container;
-    btc_ast_item* param_type = container->body->last_param->type;
+    btc_ast_container_declaration* container = item->container_group->body->last_item->value->container;
+    btc_ast_item* param_type = container->body->last_item->value->container_param->type;
     btc_template* template = param_type->template;
     assert(param_type->type == BTC_TEMPLATE);
     assert(strncmp(template->name.value, "Vector", strlen(template->name.value)) == 0);
@@ -202,8 +202,8 @@ void test_container_member_expression() {
     btc_linked_ast_item* linked_item = parser->result->first_item;
     btc_ast_item* item = linked_item->value;
 
-    btc_ast_container_declaration* container = item->container_group->body->first_item->container;
-    btc_ast_container_param* param = container->body->last_param;
+    btc_ast_container_declaration* container = item->container_group->body->first_item->value->container;
+    btc_ast_container_param* param = container->body->last_item->value->container_param;
     btc_member_expression* expr = param->type->member_expression;
 
     assert(param->type->type == BTC_MEMBER_EXPRESSION);

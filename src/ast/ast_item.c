@@ -25,6 +25,12 @@ void btc_destroy_ast_item(btc_ast_item* item) {
         case BTC_TEMPLATE:
             btc_destroy_template(item->template);
             break;
+        case BTC_CONTAINER_DECLARATION:
+            btc_destroy_container_declaration(item->container);
+            break;
+        case BTC_CONTAINER_PARAM:
+            btc_destroy_container_param(item->container_param);
+            break;
         case BTC_IMPORT_DECLARATION:
         case BTC_IDENTIFIER:
             break;

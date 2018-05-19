@@ -3,7 +3,7 @@
 
 typedef struct _btc_ast_container_group_declaration btc_ast_container_group_declaration;
 
-#include "containers_list.h"
+#include "ast_list.h"
 #include "parser_identifier.h"
 
 #define BTC_CONTAINER_GROUP 1
@@ -14,7 +14,7 @@ struct _btc_ast_container_group_declaration {
      * Common list of container declarations without `type` 
      * param
      */
-    btc_ast_containers_list* body;
+    btc_ast_list* body;
 };
 
 void btc_destroy_container_group(btc_ast_container_group_declaration* group);
