@@ -195,9 +195,10 @@ int btc_parser_peek_and_consume(btc_parser* parser, const char* string) {
     return 0;
 }
 
-void btc_parser_scan_member_expression(btc_parser* parser, btc_ast_item* output) {
+int btc_parser_scan_member_expression(btc_parser* parser, btc_ast_item* output) {
     btc_ast_item* left;
     btc_initialize_ast_item(&left);
+
     left->type = BTC_IDENTIFIER;
     left->identifier = btc_parser_consume_identifier(parser);
 
@@ -221,6 +222,8 @@ void btc_parser_scan_member_expression(btc_parser* parser, btc_ast_item* output)
         next->member_expression = expr;
         left = next;
     }
+
+    return BTC_OK;
 }
 
 void btc_parser_scan_template(btc_parser* parser, btc_ast_item* result) {
