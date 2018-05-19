@@ -139,6 +139,7 @@ int btc_parser_scan(btc_parser* parser, btc_ast_item* result) {
         return btc_parser_scan_import(parser, result);
     else
         return BTC_UNEXPECTED_TOKEN;
+
     return BTC_OK;
 }
 
@@ -266,56 +267,105 @@ void btc_parser_scan_param_type(btc_parser* parser, btc_ast_item* result) {
     result->identifier = btc_parser_consume_identifier(parser);
 }
 
-void btc_parser_scan_container_short_body(btc_parser* parser, btc_ast_container_params* body) {
-    do {
-        btc_ast_container_param* param;
-        btc_initialize_container_param(&param);
+int btc_parser_scan_container_short_param(btc_parser* parser, btc_ast_item* body) {
+    btc_ast_container_param* param;
+    btc_initialize_container_param(&param);
 
-        param->name = btc_parser_consume_identifier(parser);
-        btc_parser_expect(parser, ":");
+    body->type = BTC_CONTAINER_PARAM;
+    body->container_param = param;
 
-        btc_parser_scan_param_type(parser, param->type);
+    param->name = btc_parser_consume_identifier(parser);
+    btc_parser_expect(parser, ":");
 
-        btc_add_container_param(body, param);
+    btc_parser_scan_param_type(parser, param->type);
+
+    return BTC_OK;
+}
+
+int btc_parser_scan_container_short_body(btc_parser* parser, btc_ast_list* body) {
+    int status = BTC_OK;
+
+    do {        
+        btc_ast_item* param;
+        btc_initialize_ast_item(&param);
+
+        status = btc_parser_scan_container_short_param(parser, param);
+
+        if(status != BTC_OK)
+            return status;
+
+        btc_add_ast_item(body, param);
     } while(!btc_parser_eof(parser) && btc_parser_peek_and_consume(parser, ","));
+
+    return BTC_OK;
 }
 
-void btc_parser_scan_container_body(btc_parser* parser, btc_ast_container_params* params) {
+}
+
+int btc_parser_scan_container_body(btc_parser* parser, btc_ast_list* params) {
+    int status;
+
+    status = btc_parser_scan_comments(parser, params);
+
+    if(status != BTC_OK)
+        return status;
+
     if(btc_parser_peek_and_consume(parser, "->")) {
-        btc_parser_scan_container_short_body(parser, params);
+        status = btc_parser_scan_container_short_body(parser, params);
+
+        if(status != BTC_OK)
+            return status;
+
         btc_parser_peek_and_consume(parser, ";");
-    } else {
-        fprintf(stderr, "unexpected container declaration %s\n", parser->current_token->value);
+        return BTC_OK;
     }
+
+    return BTC_UNEXPECTED_TOKEN;
 }
 
-void btc_parser_scan_type_group_definition(btc_parser* parser, btc_ast_item* result) {
+int btc_parser_scan_container_declaration(btc_parser* parser, btc_ast_item* result) {
+    btc_ast_container_declaration* container;
+    btc_create_container_declaration(&container);
+
+    result->type = BTC_CONTAINER_DECLARATION;
+    result->container = container;
+
+    btc_ast_identifier container_name = btc_parser_consume_identifier(parser);
+
+    btc_parser_scan_container_body(parser, container->body);
+
+    container->name = container_name;
+
+    return BTC_OK;
+}
+
+int btc_parser_scan_type_group_definition(btc_parser* parser, btc_ast_item* result) {
     btc_ast_container_group_declaration* group;
     btc_create_container_group(&group);
 
     btc_parser_consume(parser, NULL);
     group->type = btc_parser_consume_identifier(parser);
     btc_parser_expect(parser, "{");
-
-    btc_ast_containers_list* containers = group->body;
+    int status = BTC_OK;
 
     while(!btc_parser_eof(parser) && !btc_parser_peek(parser, "}")) {
-        btc_ast_container_declaration* container;
-        btc_create_container_declaration(&container);
+        btc_ast_item* result;
+        btc_initialize_ast_item(&result);
 
-        btc_ast_identifier container_name = btc_parser_consume_identifier(parser);
+        status = btc_parser_scan_container_declaration(parser, result);
 
-        btc_parser_scan_container_body(parser, container->body);
+        if(status != BTC_OK)
+            return status;
 
-        container->name = container_name;
-
-        btc_add_container_declaration(containers, container);
+        btc_add_ast_item(group->body, result);
     }
 
     btc_parser_expect(parser, "}");
 
     result->type = BTC_CONTAINER_GROUP;
     result->container_group = group;
+
+    return status;
 }
 
 /**
