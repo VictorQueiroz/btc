@@ -136,11 +136,9 @@ int btc_parser_scan(btc_parser* parser, btc_ast_item* result) {
     else if(btc_parser_peek(parser, "namespace"))
         btc_parser_scan_namespace(parser, result);
     else if(btc_parser_peek(parser, "import"))
-        btc_parser_scan_import(parser, result);
-    else {
-        fprintf(stderr, "unexpected token \"%s\"\n", parser->current_token->value);
-        return 1;
-    }
+        return btc_parser_scan_import(parser, result);
+    else
+        return BTC_UNEXPECTED_TOKEN;
     return BTC_OK;
 }
 
