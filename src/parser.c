@@ -300,8 +300,47 @@ int btc_parser_scan_container_short_body(btc_parser* parser, btc_ast_list* body)
     return BTC_OK;
 }
 
+int btc_parser_scan_container_param(btc_parser* parser, btc_ast_item* result) {
+    int status = BTC_OK;
+
+    btc_ast_container_param* param;
+    btc_initialize_container_param(&param);
+
+    param->name = btc_parser_consume_identifier(parser);
+
+    btc_parser_expect(parser, ":");
+    btc_parser_scan_param_type(parser, param->type);
+    btc_parser_peek_and_consume(parser, ";");
+
+    if(status != BTC_OK)
+        return status;
+
+    result->type = BTC_CONTAINER_PARAM;
+    result->container_param = param;
+
+    return status;
+}
+
+int btc_parser_scan_full_container_body(btc_parser* parser, btc_ast_list* params) {
+    int status = BTC_OK;
+
+    if(!btc_parser_expect(parser, "{"))
+        return BTC_UNEXPECTED_TOKEN;
+
+    while(!btc_parser_peek_and_consume(parser, "}")) {
+        btc_ast_item* param;
+        btc_initialize_ast_item(&param);
+
+        status = btc_parser_scan_container_param(parser, param);
+
+        btc_add_ast_item(params, param);
+    }
+
+    return status;
+}
+
 int btc_parser_scan_container_body(btc_parser* parser, btc_ast_list* params) {
-    int status;
+    int status = BTC_UNEXPECTED_TOKEN;
 
     if(btc_parser_peek_and_consume(parser, "->")) {
         status = btc_parser_scan_container_short_body(parser, params);
@@ -310,10 +349,14 @@ int btc_parser_scan_container_body(btc_parser* parser, btc_ast_list* params) {
             return status;
 
         btc_parser_peek_and_consume(parser, ";");
-        return BTC_OK;
+    } else if(btc_parser_peek(parser, "{")) {
+        status = btc_parser_scan_full_container_body(parser, params);
+
+        if(status != BTC_OK)
+            return status;
     }
 
-    return BTC_UNEXPECTED_TOKEN;
+    return status;
 }
 
 int btc_parser_scan_container_declaration(btc_parser* parser, btc_ast_item* result) {

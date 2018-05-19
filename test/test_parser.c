@@ -214,10 +214,50 @@ void test_container_member_expression() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_container_declaration() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "\
+        type User {\
+            user {\
+                id: uint32;\
+                lastPost: Post;\
+            }\
+        }\
+    ");
+
+    btc_parser* parser;
+    btc_parser_init(&parser, tokenizer);
+
+    btc_parse(parser);
+
+    btc_linked_ast_item* linked = parser->result->first_item;
+
+    // container group body
+    linked = linked->value->container_group->body->first_item;
+
+    // first linked container param
+    linked = linked->value->container->body->first_item;
+
+    assert(strncmp(linked->value->container_param->name.value, "id", 2) == 0);
+    assert(strncmp(linked->value->container_param->type->identifier.value, "uint32", 6) == 0);
+
+    // second linked container param
+    linked = linked->next_item;
+
+    assert(strncmp(linked->value->container_param->name.value, "lastPost", 2) == 0);
+    assert(strncmp(linked->value->container_param->type->identifier.value, "Post", 4) == 0);
+
+    btc_parser_destroy(parser);
+    btc_tokenizer_destroy(tokenizer);
+}
+
 void test_parser() {
     test_container_group();
     test_container_import();
     test_container_template();
+    test_container_declaration();
     test_container_member_expression();
     test_container_namespace();
 }
