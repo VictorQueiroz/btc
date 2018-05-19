@@ -72,25 +72,7 @@ int btc_tokenizer_eof(btc_tokenizer* tokenizer){
  * Returns 1 if matches, 0 if otherwise
  */
 int btc_tokenizer_is_punctuator(btc_tokenizer* tokenizer) {
-    uint8_t ch = tokenizer->buffer[tokenizer->offset];
-
-    // { or }
-    if(ch == 0x7b || ch == 0x7d)
-        return 1;
-
-    // : or ; or , or .
-    if(ch == 0x3a || ch == 0x3b || ch == 0x2c || ch == 0x2e)
-        return 1;
-
-    // ? or -
-    if(ch == 0x3f || ch == 0x2d)
-        return 1;
-
-    // < or >
-    if(ch == 0x3c || ch == 0x3e)
-        return 1;
-
-    return 0;
+    return ch_is_punctuator(tokenizer->buffer[tokenizer->offset]);
 }
 
 /**

@@ -5,5 +5,6 @@
 
 int ch_is_number(uint8_t ch);
 int ch_is_number_start(uint8_t ch);
+int ch_is_punctuator(uint8_t ch);
 
 #endif

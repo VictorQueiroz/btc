@@ -19,3 +19,23 @@ int ch_is_number_start(uint8_t ch) {
 
     return ch_is_number(ch);
 }
+
+int ch_is_punctuator(uint8_t ch) {
+    // { or }
+    if(ch == 0x7b || ch == 0x7d)
+        return 1;
+
+    // : or ; or , or .
+    if(ch == 0x3a || ch == 0x3b || ch == 0x2c || ch == 0x2e)
+        return 1;
+
+    // ? or -
+    if(ch == 0x3f || ch == 0x2d)
+        return 1;
+
+    // < or >
+    if(ch == 0x3c || ch == 0x3e)
+        return 1;
+
+    return 0;
+}
