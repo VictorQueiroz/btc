@@ -17,15 +17,8 @@ void btc_token_init(btc_token** token_ptr, int type){
     token->type = type;
 }
 
-int btc_tokenizer_is_identifier_start(btc_tokenizer* tokenizer){
-    uint8_t ch = tokenizer->buffer[tokenizer->offset];
-
-    if(ch >= 0x41 && ch <= 0x5a) // A-Z
-        return 1;
-    else if(ch >= 0x61 && ch <= 0x7a) // a-z
-        return 1;
-
-    return 0;
+int btc_tokenizer_is_identifier_start(btc_tokenizer* tokenizer) {
+    return ch_is_identifier_start(tokenizer->buffer[tokenizer->offset]);
 }
 
 /**

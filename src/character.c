@@ -39,3 +39,12 @@ int ch_is_punctuator(uint8_t ch) {
 
     return 0;
 }
+
+int ch_is_identifier_start(uint8_t ch) {
+    if(ch >= 0x41 && ch <= 0x5a) // A-Z
+        return 1;
+    else if(ch >= 0x61 && ch <= 0x7a) // a-z
+        return 1;
+
+    return 0;
+}
