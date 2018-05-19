@@ -234,6 +234,20 @@ int btc_tokenizer_scan_string(btc_tokenizer* tokenizer) {
     return BTC_OK;
 }
 
+void btc_tokenizer_set_option(btc_tokenizer* tokenizer, int flag, int on) {
+    if(on == 1)
+        tokenizer->flags |= flag;
+    else
+        tokenizer->flags &= ~flag;
+}
+
+int btc_tokenizer_check_option(btc_tokenizer* tokenizer, int flag) {
+    if(tokenizer->flags & flag)
+        return 1;
+
+    return 0;
+}
+
 int btc_tokenizer_scan_comment(btc_tokenizer* tokenizer, const char* initializer) {
     char* finisher;
 
@@ -253,17 +267,19 @@ int btc_tokenizer_scan_comment(btc_tokenizer* tokenizer, const char* initializer
     size_t end_offset = tokenizer->offset;
     tokenizer->offset += strlen(finisher);
 
-    size_t total_characters = end_offset - start_offset;
-    char* comment = calloc(1, total_characters*sizeof(char));
-    memcpy(comment, &tokenizer->string[start_offset], total_characters);
+    if(!btc_tokenizer_check_option(tokenizer, BTC_TOKENIZER_CONFIG_IGNORE_COMMENTS)) {
+        size_t total_characters = end_offset - start_offset;
+        char* comment = calloc(1, total_characters*sizeof(char));
+        memcpy(comment, &tokenizer->string[start_offset], total_characters);
 
-    btc_token* token;
-    btc_token_init(&token, BTC_TOKEN_COMMENT);
+        btc_token* token;
+        btc_token_init(&token, BTC_TOKEN_COMMENT);
 
-    token->value = comment;
-    token->allocated = comment;
+        token->value = comment;
+        token->allocated = comment;
 
-    btc_tokenizer_push_token(tokenizer, token);
+        btc_tokenizer_push_token(tokenizer, token);
+    }
 
     return BTC_OK;
 }
