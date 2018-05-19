@@ -1,5 +1,6 @@
 #include "btc.h"
 #include "tokenizer.h"
+#include "character.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -96,11 +97,7 @@ int btc_tokenizer_is_punctuator(btc_tokenizer* tokenizer) {
  * Check if current character is a numeric value
  */
 int btc_tokenizer_is_number(btc_tokenizer* tokenizer) {
-    uint8_t ch = tokenizer->buffer[tokenizer->offset];
-
-    if(ch >= 0x30 && ch <= 0x39)
-        return 1;
-    return 0;
+    return ch_is_number(tokenizer->buffer[tokenizer->offset]);
 }
 
 int btc_tokenizer_is_identifier_part(btc_tokenizer* tokenizer) {
