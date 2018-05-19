@@ -300,8 +300,6 @@ int btc_parser_scan_container_short_body(btc_parser* parser, btc_ast_list* body)
     return BTC_OK;
 }
 
-}
-
 int btc_parser_scan_container_body(btc_parser* parser, btc_ast_list* params) {
     int status;
 
