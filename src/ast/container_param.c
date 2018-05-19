@@ -11,4 +11,5 @@ void btc_initialize_container_param(btc_ast_container_param** param_ptr) {
 
 void btc_destroy_container_param(btc_ast_container_param* param) {
     btc_destroy_ast_item(param->type);
+    free(param);
 }
