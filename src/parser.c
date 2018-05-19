@@ -303,11 +303,6 @@ int btc_parser_scan_container_short_body(btc_parser* parser, btc_ast_list* body)
 int btc_parser_scan_container_body(btc_parser* parser, btc_ast_list* params) {
     int status;
 
-    status = btc_parser_scan_comments(parser, params);
-
-    if(status != BTC_OK)
-        return status;
-
     if(btc_parser_peek_and_consume(parser, "->")) {
         status = btc_parser_scan_container_short_body(parser, params);
 
