@@ -253,11 +253,48 @@ void test_container_declaration() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_container_param_default() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "\
+        type User {\
+            user {\
+                uint32 id = 1000;\
+                double temperature = 26.5;\
+                string name = \"empty name\";\
+                string description = \"\";\
+            }\
+        }\
+    ");
+
+    btc_parser* parser;
+    btc_parser_init(&parser, tokenizer);
+
+    btc_parse(parser);
+
+    btc_linked_ast_item* container_params = parser->result->first_item->value->container_group->body->first_item->value->container->body->first_item;
+    assert(container_params->value->container_param->default_value->number.value == 1000);
+
+    container_params = container_params->next_item;
+    assert(container_params->value->container_param->default_value->number.value == 26.5);
+
+    container_params = container_params->next_item;
+    assert(strncmp(container_params->value->container_param->default_value->string.value, "empty name", strlen("empty name")) == 0);
+
+    container_params = container_params->next_item;
+    assert(strncmp(container_params->value->container_param->default_value->string.value, "", strlen("")) == 0);
+
+    btc_parser_destroy(parser);
+    btc_tokenizer_destroy(tokenizer);
+}
+
 void test_parser() {
     test_container_group();
     test_container_import();
     test_container_template();
     test_container_declaration();
+    test_container_param_default();
     test_container_member_expression();
     test_container_namespace();
 }
