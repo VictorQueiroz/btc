@@ -33,6 +33,8 @@ void btc_destroy_ast_item(btc_ast_item* item) {
             break;
         case BTC_IMPORT_DECLARATION:
         case BTC_IDENTIFIER:
+        case BTC_NUMBER:
+        case BTC_STRING:
             break;
         default:
             fprintf(stderr, "unrecognized ast item type of %d\n", item->type);
