@@ -58,12 +58,17 @@ int btc_parser_peek(btc_parser* parser, const char* value) {
  * if `token` argument is provided, it'll be fulfilled 
  * with current token before it's flushed
  */
-void btc_parser_consume(btc_parser* parser, btc_token** token) {
+int btc_parser_consume(btc_parser* parser, btc_token** token) {
+    if(parser->current_token == NULL)
+        return BTC_NO_TOKEN;
+
     if(token != NULL) {
         *token = parser->current_token;
     }
 
     parser->current_token = parser->current_token->next_token;
+
+    return BTC_OK;
 }
 
 /**
@@ -299,6 +304,36 @@ int btc_parser_scan_container_short_body(btc_parser* parser, btc_ast_list* body)
     return BTC_OK;
 }
 
+int btc_parser_scan_expression(btc_parser* parser, btc_ast_item* result) {
+    int status = BTC_OK;
+
+    btc_token* token;
+    
+    if(!btc_parser_consume(parser, &token))
+        return BTC_UNEXPECTED_END;
+
+    if(token->type == BTC_TOKEN_LITERAL_STRING) {
+        btc_string string = { token-> value };
+
+        if(status != BTC_OK)
+            return status;
+
+        string.value = token->value;
+
+        result->type = BTC_STRING;
+        result->string = string;
+    } else if(token->type == BTC_TOKEN_LITERAL_NUMBER) {
+        btc_number number = { token->number };
+
+        result->type = BTC_NUMBER;
+        result->number = number;
+    } else {
+        return BTC_UNEXPECTED_TOKEN;
+    }
+
+    return status;
+}
+
 int btc_parser_scan_container_param(btc_parser* parser, btc_ast_item* result) {
     int status = BTC_OK;
 
@@ -308,6 +343,14 @@ int btc_parser_scan_container_param(btc_parser* parser, btc_ast_item* result) {
     btc_parser_scan_param_type(parser, param->type);
 
     param->name = btc_parser_consume_identifier(parser);
+
+    if(btc_parser_peek_and_consume(parser, "=")) {
+        btc_initialize_ast_item(&param->default_value);
+        status = btc_parser_scan_expression(parser, param->default_value);
+
+        if(status != BTC_OK)
+            return status;
+    }
 
     btc_parser_peek_and_consume(parser, ";");
 
