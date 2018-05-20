@@ -58,12 +58,17 @@ int btc_parser_peek(btc_parser* parser, const char* value) {
  * if `token` argument is provided, it'll be fulfilled 
  * with current token before it's flushed
  */
-void btc_parser_consume(btc_parser* parser, btc_token** token) {
+int btc_parser_consume(btc_parser* parser, btc_token** token) {
+    if(parser->current_token == NULL)
+        return BTC_NO_TOKEN;
+
     if(token != NULL) {
         *token = parser->current_token;
     }
 
     parser->current_token = parser->current_token->next_token;
+
+    return BTC_OK;
 }
 
 /**
