@@ -2,6 +2,7 @@
 #define BTC_TOKENIZER_H_
 
 typedef struct _btc_token btc_token;
+typedef struct _btc_tokenizer btc_tokenizer;
 
 #include "btc.h"
 #include <stdint.h>
