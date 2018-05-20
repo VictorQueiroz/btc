@@ -450,7 +450,7 @@ int btc_parser_scan_type_group_definition(btc_parser* parser, btc_ast_item* resu
  * consume tokens and fulfill ast
  */
 int btc_parse(btc_parser* parser) {
-    int status;
+    int status = BTC_OK;
 
     while(!btc_parser_eof(parser)) {
         btc_ast_item* result;
