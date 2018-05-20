@@ -29,8 +29,8 @@ int ch_is_punctuator(uint8_t ch) {
     if(ch == 0x3a || ch == 0x3b || ch == 0x2c || ch == 0x2e)
         return 1;
 
-    // ? or -
-    if(ch == 0x3f || ch == 0x2d)
+    // ? or - or =
+    if(ch == 0x3f || ch == 0x2d || ch == 0x3D)
         return 1;
 
     // < or >
