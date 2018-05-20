@@ -48,3 +48,7 @@ int ch_is_identifier_start(uint8_t ch) {
 
     return 0;
 }
+
+int ch_is_line_terminator(uint8_t ch) {
+    return ch == 0x0A;
+}

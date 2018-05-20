@@ -36,6 +36,7 @@ struct _btc_tokenizer {
     const char* string;
     size_t offset;
     size_t string_length;
+    size_t line_number;
 };
 
 void btc_tokenizer_init(btc_tokenizer** tokenizer);

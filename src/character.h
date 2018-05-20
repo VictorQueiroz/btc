@@ -7,5 +7,6 @@ int ch_is_number(uint8_t ch);
 int ch_is_number_start(uint8_t ch);
 int ch_is_punctuator(uint8_t ch);
 int ch_is_identifier_start(uint8_t ch);
+int ch_is_line_terminator(uint8_t ch);
 
 #endif

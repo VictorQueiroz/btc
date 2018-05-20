@@ -315,7 +315,10 @@ void btc_tokenizer_scan_number(btc_tokenizer* tokenizer) {
 int btc_tokenizer_identify(btc_tokenizer* tokenizer) {
     uint8_t ch = tokenizer->buffer[tokenizer->offset];
 
-    if(btc_tokenizer_compare(tokenizer, "/*")) {
+    if(ch_is_line_terminator(ch)) {
+        ++tokenizer->offset;
+        ++tokenizer->line_number;
+    } else if(btc_tokenizer_compare(tokenizer, "/*")) {
         btc_tokenizer_scan_comment(tokenizer, "/*");
     } else if(btc_tokenizer_is_number_start(tokenizer)) {
         btc_tokenizer_scan_number(tokenizer);
