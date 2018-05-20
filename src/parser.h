@@ -28,6 +28,6 @@ void btc_parser_scan_param_type(btc_parser* parser, btc_ast_item* result);
 
 void btc_parser_init(btc_parser** parser_ptr, btc_tokenizer* tokenizer);
 void btc_parser_destroy(btc_parser* parser);
-void btc_parse(btc_parser* parser);
+int btc_parse(btc_parser* parser);
 
 #endif

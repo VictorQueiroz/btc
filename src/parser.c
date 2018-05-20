@@ -449,16 +449,21 @@ int btc_parser_scan_type_group_definition(btc_parser* parser, btc_ast_item* resu
 /**
  * consume tokens and fulfill ast
  */
-void btc_parse(btc_parser* parser) {
+int btc_parse(btc_parser* parser) {
+    int status;
+
     while(!btc_parser_eof(parser)) {
         btc_ast_item* result;
         btc_initialize_ast_item(&result);
 
-        if(btc_parser_scan(parser, result) != BTC_OK) {
+        status = btc_parser_scan(parser, result);
+
+        if(status != BTC_OK) {
             btc_destroy_ast_item(result);
-            break;
+            return status;
         }
 
         btc_add_ast_item(parser->result, result);
     }
+    return status;
 }
