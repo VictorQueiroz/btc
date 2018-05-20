@@ -5,6 +5,7 @@ extern "C" {
 #ifndef BTC_TOKENIZER_H_
 #define BTC_TOKENIZER_H_
 
+#include "btc.h"
 #include <stdint.h>
 #include <stddef.h>
 
@@ -28,8 +29,6 @@ struct _btc_token {
     struct _btc_token* previous_token;
 };
 
-typedef struct _btc_token btc_token;
-
 struct _btc_tokenizer {
     int flags;
     btc_token* first_token;
@@ -39,15 +38,6 @@ struct _btc_tokenizer {
     size_t offset;
     size_t string_length;
 };
-
-typedef struct _btc_tokenizer btc_tokenizer;
-
-
-void btc_tokenizer_init(btc_tokenizer** tokenizer);
-void btc_tokenizer_scan(btc_tokenizer* tokenizer, const char* string);
-void btc_tokenizer_destroy(btc_tokenizer* tokenizer);
-int btc_tokenizer_check_option(btc_tokenizer* tokenizer, int flag);
-void btc_tokenizer_set_option(btc_tokenizer* tokenizer, int flag, int on);
 
 #endif
 

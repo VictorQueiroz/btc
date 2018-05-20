@@ -1,8 +1,6 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 
-typedef struct _btc_parser btc_parser;
-
 #include "btc.h"
 #include "tokenizer.h"
 #include "ast/ast_item.h"
@@ -15,9 +13,6 @@ struct _btc_parser {
     btc_token* current_token;
 };
 
-void btc_parser_init(btc_parser** parser_ptr, btc_tokenizer* tokenizer);
-void btc_parser_destroy(btc_parser* parser);
-void btc_parse(btc_parser* parser);
 int btc_parser_eof(btc_parser* parser);
 
 int btc_parser_peek_from_index(btc_parser* parser, const char* value, size_t index);
