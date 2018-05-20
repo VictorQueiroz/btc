@@ -22,19 +22,8 @@ extern "C" {
  */
 #define BTC_NO_TOKEN -4
 
-typedef struct _btc_parser btc_parser;
-typedef struct _btc_token btc_token;
-typedef struct _btc_tokenizer btc_tokenizer;
-
-void btc_tokenizer_init(btc_tokenizer** tokenizer);
-void btc_tokenizer_scan(btc_tokenizer* tokenizer, const char* string);
-void btc_tokenizer_destroy(btc_tokenizer* tokenizer);
-int btc_tokenizer_check_option(btc_tokenizer* tokenizer, int flag);
-void btc_tokenizer_set_option(btc_tokenizer* tokenizer, int flag, int on);
-
-void btc_parser_init(btc_parser** parser_ptr, btc_tokenizer* tokenizer);
-void btc_parser_destroy(btc_parser* parser);
-void btc_parse(btc_parser* parser);
+#include "../src/tokenizer.h"
+#include "../src/parser.h"
 
 #endif
 

@@ -1,9 +1,7 @@
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifndef BTC_TOKENIZER_H_
 #define BTC_TOKENIZER_H_
+
+typedef struct _btc_token btc_token;
 
 #include "btc.h"
 #include <stdint.h>
@@ -39,8 +37,10 @@ struct _btc_tokenizer {
     size_t string_length;
 };
 
-#endif
+void btc_tokenizer_init(btc_tokenizer** tokenizer);
+void btc_tokenizer_scan(btc_tokenizer* tokenizer, const char* string);
+void btc_tokenizer_destroy(btc_tokenizer* tokenizer);
+int btc_tokenizer_check_option(btc_tokenizer* tokenizer, int flag);
+void btc_tokenizer_set_option(btc_tokenizer* tokenizer, int flag, int on);
 
-#ifdef __cplusplus
-}
 #endif
