@@ -7,6 +7,10 @@ void btc_create_container_declaration(btc_ast_container_declaration** container_
     *container_ptr = calloc(1, sizeof(btc_ast_container_declaration));
 
     btc_ast_container_declaration* container = *container_ptr;
+    btc_ast_identifier type = { "" };
+
+    container->type = type;
+
     btc_create_ast_list(&container->body);
 }
 
