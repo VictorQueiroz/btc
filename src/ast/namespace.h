@@ -16,7 +16,7 @@ struct _btc_namespace {
     btc_ast_list* body;
 };
 
-void btc_destroy_namespace(btc_namespace* namespace);
+void btc_destroy_namespace(btc_namespace* namespace_item);
 void btc_initialize_namespace(btc_namespace** namespace_ptr);
 
 #endif
