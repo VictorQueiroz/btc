@@ -20,10 +20,10 @@ void btc_destroy_ast_item(btc_ast_item* item) {
             btc_destroy_member_expression(item->member_expression);
             break;
         case BTC_NAMESPACE:
-            btc_destroy_namespace(item->namespace);
+            btc_destroy_namespace(item->namespace_item);
             break;
         case BTC_TEMPLATE:
-            btc_destroy_template(item->template);
+            btc_destroy_template(item->template_item);
             break;
         case BTC_CONTAINER_DECLARATION:
             btc_destroy_container_declaration(item->container);

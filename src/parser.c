@@ -155,13 +155,13 @@ int btc_parser_scan_namespace(btc_parser* parser, btc_ast_item* ast_item) {
     if(!btc_parser_expect(parser, "{"))
         return BTC_OK;
 
-    btc_namespace* namespace;
-    btc_initialize_namespace(&namespace);
+    btc_namespace* namespace_item;
+    btc_initialize_namespace(&namespace_item);
 
-    namespace->name = name;
+    namespace_item->name = name;
 
     ast_item->type = BTC_NAMESPACE;
-    ast_item->namespace = namespace;
+    ast_item->namespace_item = namespace_item;
 
     int status = BTC_OK;
 
@@ -176,7 +176,7 @@ int btc_parser_scan_namespace(btc_parser* parser, btc_ast_item* ast_item) {
             break;
         }
         else
-            btc_add_ast_item(namespace->body, result);
+            btc_add_ast_item(namespace_item->body, result);
     }
 
     return status;
@@ -240,10 +240,10 @@ int btc_parser_scan_member_expression(btc_parser* parser, btc_ast_item* output) 
 
 void btc_parser_scan_template(btc_parser* parser, btc_ast_item* result) {
     btc_ast_identifier name = btc_parser_consume_identifier(parser);
-    btc_template* template;
-    btc_initialize_template(&template);
+    btc_template* template_item;
+    btc_initialize_template(&template_item);
 
-    template->name = name;
+    template_item->name = name;
 
     btc_parser_expect(parser, "<");
 
@@ -252,11 +252,11 @@ void btc_parser_scan_template(btc_parser* parser, btc_ast_item* result) {
         btc_initialize_ast_item(&argument);
 
         btc_parser_scan_param_type(parser, argument);
-        btc_add_ast_item(template->arguments, argument);
+        btc_add_ast_item(template_item->arguments, argument);
     }
 
     result->type = BTC_TEMPLATE;
-    result->template = template;
+    result->template_item = template_item;
 }
 
 void btc_parser_scan_param_type(btc_parser* parser, btc_ast_item* result) {

@@ -68,7 +68,7 @@ void test_container_namespace() {
     btc_ast_item* item = linked_item->value;
 
     assert(item->type == BTC_NAMESPACE);
-    assert(strncmp(item->namespace->name.value, "users", 5) == 0);
+    assert(strncmp(item->namespace_item->name.value, "users", 5) == 0);
 
     btc_parser_destroy(parser);
     btc_tokenizer_destroy(tokenizer);
@@ -125,7 +125,7 @@ void test_container_template_single_argument() {
 
     btc_ast_container_declaration* container = item->container_group->body->last_item->value->container;
     btc_ast_item* param_type = container->body->last_item->value->container_param->type;
-    btc_template* template = param_type->template;
+    btc_template* template = param_type->template_item;
     assert(param_type->type == BTC_TEMPLATE);
     assert(strncmp(template->name.value, "Vector", strlen(template->name.value)) == 0);
 
@@ -161,7 +161,7 @@ void test_container_template_multiple_arguments() {
 
     btc_ast_container_declaration* container = item->container_group->body->last_item->value->container;
     btc_ast_item* param_type = container->body->last_item->value->container_param->type;
-    btc_template* template = param_type->template;
+    btc_template* template = param_type->template_item;
     assert(param_type->type == BTC_TEMPLATE);
     assert(strncmp(template->name.value, "Vector", strlen(template->name.value)) == 0);
 
