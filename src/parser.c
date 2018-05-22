@@ -157,7 +157,9 @@ int btc_parser_scan_alias(btc_parser* parser, btc_ast_item* result) {
  * scan ast into `result` 
  */
 int btc_parser_scan(btc_parser* parser, btc_ast_item* result) {
-    if(btc_parser_peek(parser, "type"))
+    if(btc_parser_peek(parser, "alias"))
+        return btc_parser_scan_alias(parser, result);
+    else if(btc_parser_peek(parser, "type"))
         btc_parser_scan_type_group_definition(parser, result);
     else if(btc_parser_peek(parser, "namespace"))
         btc_parser_scan_namespace(parser, result);

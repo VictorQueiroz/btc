@@ -22,6 +22,9 @@ void btc_destroy_ast_item(btc_ast_item* item) {
         case BTC_NAMESPACE:
             btc_destroy_namespace(item->namespace_item);
             break;
+        case BTC_ALIAS:
+            btc_destroy_ast_item(item->alias.value);
+            break;
         case BTC_TEMPLATE:
             btc_destroy_template(item->template_item);
             break;

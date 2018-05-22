@@ -289,7 +289,26 @@ void test_container_param_default() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_container_alias() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "\
+        alias Buffer = Vector<Uint8>;\
+        alias ObjectId = StrictSize<Buffer, 12>;\
+    ");
+
+    btc_parser* parser;
+    btc_parser_init(&parser, tokenizer);
+
+    assert(btc_parse(parser) == BTC_OK);
+
+    btc_parser_destroy(parser);
+    btc_tokenizer_destroy(tokenizer);
+}
+
 void test_parser() {
+    test_container_alias();
     test_container_group();
     test_container_import();
     test_container_template();
