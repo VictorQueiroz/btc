@@ -274,7 +274,9 @@ void btc_parser_scan_template(btc_parser* parser, btc_ast_item* result) {
         btc_ast_item* argument;
         btc_initialize_ast_item(&argument);
 
-        btc_parser_scan_param_type(parser, argument);
+        if(btc_parser_scan_literal_expression(parser, argument) != BTC_OK) {
+            btc_parser_scan_param_type(parser, argument);
+        }
         btc_add_ast_item(template_item->arguments, argument);
     }
 
