@@ -14,7 +14,7 @@ extern "C" {
  */
 #define BTC_UNEXPECTED_END -2
 /**
- * Received unexpected token during parsing
+ * Found unexpected token value / type
  */
 #define BTC_UNEXPECTED_TOKEN -3
 /**
