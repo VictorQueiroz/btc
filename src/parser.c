@@ -304,6 +304,9 @@ int btc_parser_scan_container_short_body(btc_parser* parser, btc_ast_list* body)
     return BTC_OK;
 }
 
+void btc_get_token(btc_parser* parser, btc_token** token_ptr) {
+    *token_ptr = parser->current_token;
+}
 int btc_parser_scan_expression(btc_parser* parser, btc_ast_item* result) {
     int status = BTC_OK;
 
