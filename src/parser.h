@@ -25,6 +25,7 @@ btc_ast_identifier btc_parser_consume_identifier(btc_parser* parser);
 int btc_parser_scan_namespace(btc_parser* parser, btc_ast_item* ast_item);
 int btc_parser_scan_type_group_definition(btc_parser* parser, btc_ast_item* result);
 void btc_parser_scan_param_type(btc_parser* parser, btc_ast_item* result);
+int btc_parser_scan_literal_expression(btc_parser* parser, btc_ast_item* result);
 
 void btc_parser_init(btc_parser** parser_ptr, btc_tokenizer* tokenizer);
 void btc_parser_destroy(btc_parser* parser);
