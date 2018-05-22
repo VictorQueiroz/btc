@@ -132,6 +132,27 @@ int btc_parser_scan_import(btc_parser* parser, btc_ast_item* result) {
     return BTC_OK;
 }
 
+int btc_parser_scan_alias(btc_parser* parser, btc_ast_item* result) {
+    int status = BTC_OK;
+
+    btc_ast_item* value;
+    btc_initialize_ast_item(&value);
+
+    btc_parser_consume(parser, NULL);
+    btc_ast_identifier name = btc_parser_consume_identifier(parser);
+
+    btc_parser_expect(parser, "=");
+    btc_parser_scan_param_type(parser, value);
+    btc_parser_expect(parser, ";");
+
+    btc_alias alias = { name, value };
+
+    result->type = BTC_ALIAS;
+    result->alias = alias;
+
+    return status;
+}
+
 /**
  * scan ast into `result` 
  */
