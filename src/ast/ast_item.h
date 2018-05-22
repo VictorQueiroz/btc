@@ -13,10 +13,12 @@ typedef struct _btc_ast_item btc_ast_item;
 #include "container_param.h"
 #include "string.h"
 #include "number.h"
+#include "alias.h"
 
 struct _btc_ast_item {
     int type;
 
+    btc_alias alias;
     btc_string string;
     btc_number number;
     btc_ast_identifier identifier;

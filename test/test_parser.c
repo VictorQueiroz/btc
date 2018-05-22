@@ -20,7 +20,7 @@ void test_container_group() {
     btc_ast_item* ast_item;
     btc_parser_init(&parser, tokenizer);
 
-    btc_parse(parser);
+    assert(btc_parse(parser) == BTC_OK);
 
     ast_item = parser->result->first_item->value;
     assert(ast_item->type == BTC_CONTAINER_GROUP);
@@ -62,7 +62,7 @@ void test_container_namespace() {
     btc_parser* parser;
     btc_parser_init(&parser, tokenizer);
 
-    btc_parse(parser);
+    assert(btc_parse(parser) == BTC_OK);
 
     btc_linked_ast_item* linked_item = parser->result->first_item;
     btc_ast_item* item = linked_item->value;
@@ -90,7 +90,7 @@ void test_container_import() {
     btc_parser* parser;
     btc_parser_init(&parser, tokenizer);
 
-    btc_parse(parser);
+    assert(btc_parse(parser) == BTC_OK);
 
     btc_linked_ast_item* linked_item = parser->result->first_item;
     btc_ast_item* item = linked_item->value;
@@ -118,7 +118,7 @@ void test_container_template_single_argument() {
     btc_parser* parser;
     btc_parser_init(&parser, tokenizer);
 
-    btc_parse(parser);
+    assert(btc_parse(parser) == BTC_OK);
 
     btc_linked_ast_item* linked_item = parser->result->first_item;
     btc_ast_item* item = linked_item->value;
@@ -154,7 +154,7 @@ void test_container_template_multiple_arguments() {
     btc_parser* parser;
     btc_parser_init(&parser, tokenizer);
 
-    btc_parse(parser);
+    assert(btc_parse(parser) == BTC_OK);
 
     btc_linked_ast_item* linked_item = parser->result->first_item;
     btc_ast_item* item = linked_item->value;
@@ -197,7 +197,7 @@ void test_container_member_expression() {
     btc_parser* parser;
     btc_parser_init(&parser, tokenizer);
 
-    btc_parse(parser);
+    assert(btc_parse(parser) == BTC_OK);
 
     btc_linked_ast_item* linked_item = parser->result->first_item;
     btc_ast_item* item = linked_item->value;
@@ -230,7 +230,7 @@ void test_container_declaration() {
     btc_parser* parser;
     btc_parser_init(&parser, tokenizer);
 
-    btc_parse(parser);
+    assert(btc_parse(parser) == BTC_OK);
 
     btc_linked_ast_item* linked = parser->result->first_item;
 
@@ -271,7 +271,7 @@ void test_container_param_default() {
     btc_parser* parser;
     btc_parser_init(&parser, tokenizer);
 
-    btc_parse(parser);
+    assert(btc_parse(parser) == BTC_OK);
 
     btc_linked_ast_item* container_params = parser->result->first_item->value->container_group->body->first_item->value->container->body->first_item;
     assert(container_params->value->container_param->default_value->number.value == 1000);
@@ -289,7 +289,26 @@ void test_container_param_default() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_container_alias() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "\
+        alias Buffer = Vector<Uint8>;\
+        alias ObjectId = StrictSize<Buffer, 12>;\
+    ");
+
+    btc_parser* parser;
+    btc_parser_init(&parser, tokenizer);
+
+    assert(btc_parse(parser) == BTC_OK);
+
+    btc_parser_destroy(parser);
+    btc_tokenizer_destroy(tokenizer);
+}
+
 void test_parser() {
+    test_container_alias();
     test_container_group();
     test_container_import();
     test_container_template();

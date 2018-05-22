@@ -134,7 +134,9 @@ int btc_tokenizer_is_keyword(btc_tokenizer* tokenizer) {
     if(!btc_tokenizer_is_identifier_start(tokenizer))
         return 0;
 
-    if(btc_tokenizer_compare(tokenizer, "type"))
+    if(btc_tokenizer_compare(tokenizer, "alias"))
+        return 1;
+    else if(btc_tokenizer_compare(tokenizer, "type"))
         return 1;
     else if(btc_tokenizer_compare(tokenizer, "namespace"))
         return 1;

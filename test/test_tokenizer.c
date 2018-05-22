@@ -258,6 +258,72 @@ void test_tokenizer_test_ignore_comment() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_tokenizer_alias() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "\
+        alias Buffer = Vector<Uint8>;\
+        alias ObjectId = StrictSize<Buffer, 12>;\
+    ");
+
+    btc_token* token = tokenizer->first_token;
+    expect_keyword(token, "alias");
+
+    token = token->next_token;
+    expect_identifier(token, "Buffer");
+
+    token = token->next_token;
+    expect_punctuator(token, "=");
+
+    token = token->next_token;
+    expect_identifier(token, "Vector");
+
+    token = token->next_token;
+    expect_punctuator(token, "<");
+
+    token = token->next_token;
+    expect_identifier(token, "Uint8");
+
+    token = token->next_token;
+    expect_punctuator(token, ">");
+
+    token = token->next_token;
+    expect_punctuator(token, ";");
+
+    token = token->next_token;
+    expect_keyword(token, "alias");
+
+    token = token->next_token;
+    expect_identifier(token, "ObjectId");
+
+    token = token->next_token;
+    expect_punctuator(token, "=");
+
+    token = token->next_token;
+    expect_identifier(token, "StrictSize");
+
+    token = token->next_token;
+    expect_punctuator(token, "<");
+
+    token = token->next_token;
+    expect_identifier(token, "Buffer");
+
+    token = token->next_token;
+    expect_punctuator(token, ",");
+
+    token = token->next_token;
+    expect_number(token, 12);
+
+    token = token->next_token;
+    expect_punctuator(token, ">");
+
+    token = token->next_token;
+    expect_punctuator(token, ";");
+
+    btc_tokenizer_destroy(tokenizer);
+}
+
 void test_tokenizer_flags() {
     btc_tokenizer* tokenizer;
     btc_tokenizer_init(&tokenizer);
@@ -276,6 +342,7 @@ void test_tokenizer() {
     test_tokenizer_string();
     test_tokenizer_test_number();
     test_tokenizer_flags();
+    test_tokenizer_alias();
     test_tokenizer_member_expression();
     test_tokenizer_test_template();
     test_tokenizer_test_comment();
