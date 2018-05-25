@@ -4,32 +4,34 @@
 #include "tokenizer.h"
 #include "test_tokenizer.h"
 
-void expect_token(btc_token* token, const char* string, int type) {
+void expect_token(btc_linked_token* linked, const char* string, int type) {
+    btc_token* token = linked->value;
     assert(token->type == type);
     assert(strncmp(token->value, string, strlen(string)) == 0);
 }
 
-void expect_identifier(btc_token* token, const char* string) {
-    expect_token(token, string, BTC_TOKEN_IDENTIFIER);
+void expect_identifier(btc_linked_token* linked, const char* string) {
+    expect_token(linked, string, BTC_TOKEN_IDENTIFIER);
 }
 
-void expect_keyword(btc_token* token, const char* string) {
-    expect_token(token, string, BTC_TOKEN_KEYWORD);
+void expect_keyword(btc_linked_token* linked, const char* string) {
+    expect_token(linked, string, BTC_TOKEN_KEYWORD);
 }
 
-void expect_punctuator(btc_token* token, const char* string) {
-    expect_token(token, string, BTC_TOKEN_PUNCTUATOR);
+void expect_punctuator(btc_linked_token* linked, const char* string) {
+    expect_token(linked, string, BTC_TOKEN_PUNCTUATOR);
 }
 
-void expect_literal_string(btc_token* token, const char* string) {
-    expect_token(token, string, BTC_TOKEN_LITERAL_STRING);
+void expect_literal_string(btc_linked_token* linked, const char* string) {
+    expect_token(linked, string, BTC_TOKEN_LITERAL_STRING);
 }
 
-void expect_comment(btc_token* token, const char* string){
-    expect_token(token, string, BTC_TOKEN_COMMENT);
+void expect_comment(btc_linked_token* linked, const char* string){
+    expect_token(linked, string, BTC_TOKEN_COMMENT);
 }
 
-void expect_number(btc_token* token, double number) {
+void expect_number(btc_linked_token* linked, double number) {
+    btc_token* token = linked->value;
     assert(token->type == BTC_TOKEN_LITERAL_NUMBER);
     assert(token->number == number);
 }
@@ -42,31 +44,31 @@ void test_tokenizer_simple_container_group() {
         user -> uint32 id;\
     }");
 
-    btc_token* token = tokenizer->first_token;
+    btc_linked_token* token = tokenizer->tokens_list->first_item;
     expect_keyword(token, "type");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "User");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, "{");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "user");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, "->");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "uint32");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "id");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, ";");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, "}");
 
     btc_tokenizer_destroy(tokenizer);
@@ -84,49 +86,49 @@ void test_tokenizer_namespace() {
         }\
     ");
 
-    btc_token* token = tokenizer->first_token;
+    btc_linked_token* token = tokenizer->tokens_list->first_item;
     expect_keyword(token, "namespace");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "users");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, "{");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_keyword(token, "type");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "User");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, "{");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "user");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, "->");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "uint32");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "id");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, ",");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "string");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "name");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, "}");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, "}");
 
     btc_tokenizer_destroy(tokenizer);
@@ -140,10 +142,10 @@ void test_tokenizer_string() {
         import \"./default.schema.txt\";\
     ");
 
-    btc_token* token = tokenizer->first_token;
+    btc_linked_token* token = tokenizer->tokens_list->first_item;
     expect_keyword(token, "import");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_literal_string(token, "./default.schema.txt");
 
     btc_tokenizer_destroy(tokenizer);
@@ -155,25 +157,25 @@ void test_tokenizer_test_template() {
 
     btc_tokenizer_scan(tokenizer, "vector<vector<uint32>>");
 
-    btc_token* token = tokenizer->first_token;
+    btc_linked_token* token = tokenizer->tokens_list->first_item;
     expect_identifier(token, "vector");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, "<");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "vector");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, "<");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "uint32");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, ">");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, ">");
 
     btc_tokenizer_destroy(tokenizer);
@@ -185,13 +187,13 @@ void test_tokenizer_member_expression() {
 
     btc_tokenizer_scan(tokenizer, "posts.Post");
 
-    btc_token* token = tokenizer->first_token;
+    btc_linked_token* token = tokenizer->tokens_list->first_item;
     expect_identifier(token, "posts");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, ".");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "Post");
 
     btc_tokenizer_destroy(tokenizer);
@@ -209,15 +211,15 @@ void test_tokenizer_test_comment() {
     // last one line comment \n\
     ");
 
-    btc_token* token = tokenizer->first_token;
+    btc_linked_token* token = tokenizer->tokens_list->first_item;
     expect_comment(token, " one line comment ");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_comment(token, "*\
      * test comment \
      ");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_comment(token, " last one line comment ");
 
     btc_tokenizer_destroy(tokenizer);
@@ -235,16 +237,16 @@ void test_tokenizer_test_number() {
         -0.0000000123\
     ");
 
-    btc_token* token = tokenizer->first_token;
+    btc_linked_token* token = tokenizer->tokens_list->first_item;
     expect_number(token, 1010101010);
 
-    token = token->next_token;
+    token = token->next_item;
     expect_number(token, -1.0);
 
-    token = token->next_token;
+    token = token->next_item;
     expect_number(token, 21321654);
 
-    token = token->next_token;
+    token = token->next_item;
     expect_number(token, -0.0000000123);
 
     btc_tokenizer_destroy(tokenizer);
@@ -261,7 +263,7 @@ void test_tokenizer_test_ignore_comment() {
      */\
     ");
 
-    assert(tokenizer->first_token == NULL);
+    assert(tokenizer->tokens_list->first_item == NULL);
 
     btc_tokenizer_destroy(tokenizer);
 }
@@ -275,58 +277,58 @@ void test_tokenizer_alias() {
         alias ObjectId = StrictSize<Buffer, 12>;\
     ");
 
-    btc_token* token = tokenizer->first_token;
+    btc_linked_token* token = tokenizer->tokens_list->first_item;
     expect_keyword(token, "alias");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "Buffer");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, "=");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "Vector");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, "<");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "Uint8");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, ">");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, ";");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_keyword(token, "alias");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "ObjectId");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, "=");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "StrictSize");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, "<");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_identifier(token, "Buffer");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, ",");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_number(token, 12);
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, ">");
 
-    token = token->next_token;
+    token = token->next_item;
     expect_punctuator(token, ";");
 
     btc_tokenizer_destroy(tokenizer);
