@@ -320,6 +320,7 @@ int btc_tokenizer_scan_sl_comment(btc_tokenizer* tokenizer, const char* open_com
     char* buffer = calloc(1, total_characters + 1);
     memcpy(buffer, &tokenizer->buffer[start_offset], total_characters);
 
+    
     btc_token* token;
     btc_token_init(&token, BTC_TOKEN_COMMENT);
 
