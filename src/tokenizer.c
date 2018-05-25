@@ -317,7 +317,7 @@ int btc_tokenizer_scan_sl_comment(btc_tokenizer* tokenizer, const char* open_com
 
     const size_t end_offset = tokenizer->offset;
     const size_t total_characters = end_offset - start_offset;
-    char* buffer = malloc(sizeof(total_characters));
+    char* buffer = malloc((sizeof(char)*total_characters));
     memcpy(buffer, &tokenizer->buffer[start_offset], total_characters);
 
     btc_token* token;
