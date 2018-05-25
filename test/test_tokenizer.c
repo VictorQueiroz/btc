@@ -202,15 +202,23 @@ void test_tokenizer_test_comment() {
     btc_tokenizer_init(&tokenizer);
 
     btc_tokenizer_scan(tokenizer, "\
+    // one line comment \n\
     /**\
      * test comment \
      */\
+    // last one line comment \n\
     ");
 
     btc_token* token = tokenizer->first_token;
+    expect_comment(token, " one line comment ");
+
+    token = token->next_token;
     expect_comment(token, "*\
      * test comment \
      ");
+
+    token = token->next_token;
+    expect_comment(token, " last one line comment ");
 
     btc_tokenizer_destroy(tokenizer);
 }
