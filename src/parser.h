@@ -8,11 +8,14 @@ typedef struct _btc_parser btc_parser;
 #include "ast/ast_item.h"
 #include "ast/container_group.h"
 #include "ast/parser_identifier.h"
+#include "tokens_list.h"
+
+#include <stddef.h>
 
 struct _btc_parser {
     int status;
     btc_ast_list* result;
-    btc_token* current_token;
+    btc_linked_token* current_token;
 };
 
 int btc_parser_eof(btc_parser* parser);

@@ -1,6 +1,7 @@
 #include "btc.h"
 #include "tokenizer.h"
 #include "character.h"
+#include "tokens_list.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -8,6 +9,7 @@
 
 void btc_tokenizer_init(btc_tokenizer** tokenizer_ptr){
     *tokenizer_ptr = calloc(1, sizeof(btc_tokenizer));
+    btc_initialize_tokens_list(&(*tokenizer_ptr)->tokens_list);
 }
 
 void btc_token_init(btc_token** token_ptr, int type){
@@ -33,16 +35,7 @@ int btc_tokenizer_compare(btc_tokenizer* tokenizer, const char* token) {
 }
 
 void btc_tokenizer_push_token(btc_tokenizer* tokenizer, btc_token* token) {
-    btc_token* last_token = tokenizer->last_token;
-    token->previous_token = last_token;
-
-    if(last_token != NULL)
-        last_token->next_token = token;
-
-    if(tokenizer->first_token == NULL)
-        tokenizer->first_token = token;
-
-    tokenizer->last_token = token;
+    btc_add_token(tokenizer->tokens_list, token);
 }
 
 void btc_tokenizer_push_keyword(btc_tokenizer* tokenizer, const char* value) {
@@ -377,17 +370,7 @@ void btc_tokenizer_scan(btc_tokenizer* tokenizer, const char* string) {
 }
 
 void btc_tokenizer_destroy(btc_tokenizer* tokenizer){
-    btc_token* token = tokenizer->last_token;
-    btc_token* previous_token;
-
-    while(token != NULL){
-        previous_token = token->previous_token;
-        if(token->allocated != NULL) {
-            free(token->allocated);
-        }
-        free(token);
-        token = previous_token;
-    }
+    btc_destroy_tokens_list(tokenizer->tokens_list);
 
     free(tokenizer->buffer);
     free(tokenizer);

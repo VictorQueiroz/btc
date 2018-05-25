@@ -17,7 +17,11 @@ void btc_parser_init(btc_parser** parser_ptr, btc_tokenizer* tokenizer) {
 
     parser->result = list;
     parser->status = BTC_OK;
-    parser->current_token = tokenizer->first_token;
+    parser->current_token = tokenizer->tokens_list->first_item;
+}
+
+void btc_parser_get_token(btc_parser* parser, btc_token** token_output) {
+    *token_output = parser->current_token->value;
 }
 
 void btc_parser_destroy(btc_parser* parser){
@@ -29,16 +33,19 @@ void btc_parser_destroy(btc_parser* parser){
  * Check if current token has the following value starting from `index`
  */
 int btc_parser_peek_from_index(btc_parser* parser, const char* value, size_t index) {
-    btc_token* token = parser->current_token;
+    btc_linked_token* linked = parser->current_token;
+
     size_t current_index = 0;
 
     while(current_index < index) {
-        if(token->next_token == NULL)
+        if(linked->next_item == NULL)
             return 0;
 
-        token = token->next_token;
+        linked = linked->next_item;
         ++current_index;
     }
+
+    btc_token* token = linked->value;
 
     if(strncmp(token->value, value, strlen(value)) == 0)
         return 1;
@@ -63,10 +70,10 @@ int btc_parser_consume(btc_parser* parser, btc_token** token) {
         return BTC_NO_TOKEN;
 
     if(token != NULL) {
-        *token = parser->current_token;
+        *token = parser->current_token->value;
     }
 
-    parser->current_token = parser->current_token->next_token;
+    parser->current_token = parser->current_token->next_item;
 
     return BTC_OK;
 }
@@ -330,7 +337,7 @@ int btc_parser_scan_container_short_body(btc_parser* parser, btc_ast_list* body)
 }
 
 void btc_get_token(btc_parser* parser, btc_token** token_ptr) {
-    *token_ptr = parser->current_token;
+    *token_ptr = parser->current_token->value;
 }
 
 int btc_parser_scan_literal_expression(btc_parser* parser, btc_ast_item* result) {

@@ -14,6 +14,7 @@ typedef struct _btc_ast_item btc_ast_item;
 #include "string.h"
 #include "number.h"
 #include "alias.h"
+#include "comments_list.h"
 
 struct _btc_ast_item {
     int type;
