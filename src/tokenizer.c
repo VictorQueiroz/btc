@@ -222,24 +222,17 @@ int btc_tokenizer_check_option(btc_tokenizer* tokenizer, int flag) {
     return 0;
 }
 
-int btc_tokenizer_scan_comment(btc_tokenizer* tokenizer, const char* initializer) {
-    char* finisher;
-
-    if(strncmp(initializer, "/*", 2) == 0)
-        finisher = "*/";
-    else
-        return BTC_UNEXPECTED_TOKEN;
-
-    tokenizer->offset += strlen(initializer);
+int btc_tokenizer_scan_comment_block(btc_tokenizer* tokenizer, const char* open_comment_token, const char* close_comment_token) {
+    tokenizer->offset += strlen(open_comment_token);
 
     size_t start_offset = tokenizer->offset;
 
-    while(!btc_tokenizer_compare(tokenizer, finisher)) {
+    while(!btc_tokenizer_compare(tokenizer, close_comment_token)) {
         tokenizer->offset++;
     }
 
     size_t end_offset = tokenizer->offset;
-    tokenizer->offset += strlen(finisher);
+    tokenizer->offset += strlen(close_comment_token);
 
     if(!btc_tokenizer_check_option(tokenizer, BTC_TOKENIZER_CONFIG_IGNORE_COMMENTS)) {
         size_t total_characters = end_offset - start_offset;
@@ -347,7 +340,7 @@ int btc_tokenizer_identify(btc_tokenizer* tokenizer) {
     } else if(btc_tokenizer_compare(tokenizer, "//")) {
         btc_tokenizer_scan_sl_comment(tokenizer, "//");
     } else if(btc_tokenizer_compare(tokenizer, "/*")) {
-        btc_tokenizer_scan_comment(tokenizer, "/*");
+        btc_tokenizer_scan_comment_block(tokenizer, "/*", "*/");
     } else if(btc_tokenizer_is_number_start(tokenizer)) {
         btc_tokenizer_scan_number(tokenizer);
     } else if(btc_tokenizer_is_keyword(tokenizer)) {
