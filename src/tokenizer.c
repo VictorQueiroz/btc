@@ -228,9 +228,13 @@ int btc_tokenizer_scan_comment_block(btc_tokenizer* tokenizer, const char* open_
     size_t start_offset = tokenizer->offset;
     tokenizer->offset += strlen(open_comment_token);
 
+    while(!btc_tokenizer_eof(tokenizer) && !btc_tokenizer_compare(tokenizer, close_comment_token)) {
+        uint8_t ch = tokenizer->buffer[tokenizer->offset];
 
-    while(!btc_tokenizer_compare(tokenizer, close_comment_token)) {
-        tokenizer->offset++;
+        if(ch_is_line_terminator(ch))
+            ++tokenizer->line_number;
+
+        ++tokenizer->offset;
     }
 
     tokenizer->offset += strlen(close_comment_token);
