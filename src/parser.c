@@ -66,8 +66,10 @@ int btc_parser_peek(btc_parser* parser, const char* value) {
  * with current token before it's flushed
  */
 int btc_parser_consume(btc_parser* parser, btc_token** token) {
-    if(parser->current_token == NULL)
+    if(parser->current_token == NULL) {
+        fprintf(stderr, "Unexpected end\n");
         return BTC_NO_TOKEN;
+    }
 
     if(token != NULL) {
         *token = parser->current_token->value;
