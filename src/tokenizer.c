@@ -189,7 +189,7 @@ int btc_tokenizer_scan_string(btc_tokenizer* tokenizer) {
     }
 
     if(!btc_tokenizer_compare(tokenizer, mark_initializer)) {
-        fprintf(stderr, "unexpected end of string with \"%c\"\n", tokenizer->string[tokenizer->offset]);
+        fprintf(stderr, "Expected %s at the end of string but got %c instead\n", mark_initializer, tokenizer->string[tokenizer->offset]);
         return BTC_UNEXPECTED_END;
     }
 
