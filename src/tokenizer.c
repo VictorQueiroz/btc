@@ -9,6 +9,10 @@
 
 void btc_tokenizer_init(btc_tokenizer** tokenizer_ptr){
     *tokenizer_ptr = calloc(1, sizeof(btc_tokenizer));
+
+    if(!btc_tokenizer_check_option((*tokenizer_ptr), BTC_TOKENIZER_CONFIG_IGNORE_COMMENTS))
+        btc_initialize_tokens_list(&(*tokenizer_ptr)->comments_list);
+
     btc_initialize_tokens_list(&(*tokenizer_ptr)->tokens_list);
 }
 
