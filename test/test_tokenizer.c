@@ -40,9 +40,11 @@ void test_tokenizer_simple_container_group() {
     btc_tokenizer* tokenizer;
     btc_tokenizer_init(&tokenizer);
 
-    btc_tokenizer_scan(tokenizer, "type User {\
+    int status = btc_tokenizer_scan(tokenizer, "type User {\
         user -> uint32 id;\
     }");
+
+    assert(status == BTC_OK);
 
     btc_linked_token* token = tokenizer->tokens_list->first_item;
     expect_keyword(token, "type");
@@ -78,13 +80,15 @@ void test_tokenizer_namespace() {
     btc_tokenizer* tokenizer;
     btc_tokenizer_init(&tokenizer);
 
-    btc_tokenizer_scan(tokenizer, "\
+    int status = btc_tokenizer_scan(tokenizer, "\
         namespace users {\
             type User {\
                 user -> uint32 id, string name\
             }\
         }\
     ");
+
+    assert(status == BTC_OK);
 
     btc_linked_token* token = tokenizer->tokens_list->first_item;
     expect_keyword(token, "namespace");
@@ -138,9 +142,11 @@ void test_tokenizer_string() {
     btc_tokenizer* tokenizer;
     btc_tokenizer_init(&tokenizer);
 
-    btc_tokenizer_scan(tokenizer, "\
+    int status = btc_tokenizer_scan(tokenizer, "\
         import \"./default.schema.txt\";\
     ");
+
+    assert(status == BTC_OK);
 
     btc_linked_token* token = tokenizer->tokens_list->first_item;
     expect_keyword(token, "import");
@@ -155,7 +161,7 @@ void test_tokenizer_test_template() {
     btc_tokenizer* tokenizer;
     btc_tokenizer_init(&tokenizer);
 
-    btc_tokenizer_scan(tokenizer, "vector<vector<uint32>>");
+    assert(btc_tokenizer_scan(tokenizer, "vector<vector<uint32>>") == BTC_OK);
 
     btc_linked_token* token = tokenizer->tokens_list->first_item;
     expect_identifier(token, "vector");
@@ -203,7 +209,7 @@ void test_tokenizer_test_comment() {
     btc_tokenizer* tokenizer;
     btc_tokenizer_init(&tokenizer);
 
-    btc_tokenizer_scan(tokenizer, "\
+    int status = btc_tokenizer_scan(tokenizer, "\
     // one line comment \n\
     /**\
      * test comment \
@@ -211,7 +217,9 @@ void test_tokenizer_test_comment() {
     // last one line comment \n\
     ");
 
-    btc_linked_token* token = tokenizer->tokens_list->first_item;
+    assert(status == BTC_OK);
+
+    btc_linked_token* token = tokenizer->comments_list->first_item;
     expect_comment(token, " one line comment ");
 
     token = token->next_item;
@@ -230,12 +238,14 @@ void test_tokenizer_test_number() {
     btc_tokenizer_init(&tokenizer);
     btc_tokenizer_set_option(tokenizer, BTC_TOKENIZER_CONFIG_IGNORE_COMMENTS, 1);
 
-    btc_tokenizer_scan(tokenizer, "\
+    int status = btc_tokenizer_scan(tokenizer, "\
         1010101010\
         -1.0\
         21321654\
         -0.0000000123\
     ");
+
+    assert(status == BTC_OK);
 
     btc_linked_token* token = tokenizer->tokens_list->first_item;
     expect_number(token, 1010101010);
@@ -257,12 +267,13 @@ void test_tokenizer_test_ignore_comment() {
     btc_tokenizer_init(&tokenizer);
     btc_tokenizer_set_option(tokenizer, BTC_TOKENIZER_CONFIG_IGNORE_COMMENTS, 1);
 
-    btc_tokenizer_scan(tokenizer, "\
+    int status = btc_tokenizer_scan(tokenizer, "\
     /**\
      * test comment \
      */\
     ");
 
+    assert(status == BTC_OK);
     assert(tokenizer->tokens_list->first_item == NULL);
 
     btc_tokenizer_destroy(tokenizer);
@@ -272,10 +283,12 @@ void test_tokenizer_alias() {
     btc_tokenizer* tokenizer;
     btc_tokenizer_init(&tokenizer);
 
-    btc_tokenizer_scan(tokenizer, "\
+    int status = btc_tokenizer_scan(tokenizer, "\
         alias Buffer = Vector<Uint8>;\
         alias ObjectId = StrictSize<Buffer, 12>;\
     ");
+
+    assert(status == BTC_OK);
 
     btc_linked_token* token = tokenizer->tokens_list->first_item;
     expect_keyword(token, "alias");
