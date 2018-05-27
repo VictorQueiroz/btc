@@ -45,6 +45,10 @@ int btc_tokenizer_compare(btc_tokenizer* tokenizer, const char* token) {
     return 0;
 }
 
+void btc_tokenizer_push_comment(btc_tokenizer* tokenizer, btc_token* token) {
+    btc_add_token(tokenizer->comments_list, token);
+}
+
 void btc_tokenizer_push_token(btc_tokenizer* tokenizer, btc_token* token) {
     btc_add_token(tokenizer->tokens_list, token);
 }
