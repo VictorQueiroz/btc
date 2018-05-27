@@ -21,6 +21,7 @@ typedef struct _btc_tokenizer btc_tokenizer;
 struct _btc_tokenizer {
     int flags;
     btc_tokens_list* tokens_list;
+    btc_tokens_list* comments_list;
     uint8_t* buffer;
     const char* string;
     size_t offset;
