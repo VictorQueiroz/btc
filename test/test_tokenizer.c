@@ -10,6 +10,18 @@ void expect_token(btc_linked_token* linked, const char* string, int type) {
     assert(strncmp(token->value, string, strlen(string)) == 0);
 }
 
+/**
+ * Assert that token has the appropriate range
+ */
+void expect_token_range(btc_linked_token* linked, int start_ln, int end_ln, int start_o, int end_o) {
+    btc_token* token = linked->value;
+
+    assert(token->range.start_line_number == start_ln);
+    assert(token->range.end_line_number == end_ln);
+    assert(token->range.start_offset == start_o);
+    assert(token->range.end_offset == end_o);
+}
+
 void expect_identifier(btc_linked_token* linked, const char* string) {
     expect_token(linked, string, BTC_TOKEN_IDENTIFIER);
 }
@@ -359,6 +371,39 @@ void test_tokenizer_flags() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_tokenizer_line_number() {
+    int status;
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    status = btc_tokenizer_scan(tokenizer, "\
+    // comment 1\n\
+    // comment 2\n\
+    /**\n\
+     * This is a simple testing \n\
+     * comment\n\
+     */\
+    ");
+    assert(status == BTC_OK);
+
+    btc_linked_token* linked = tokenizer->comments_list->first_item;
+    expect_comment(linked, " comment 1");
+    expect_token_range(linked, 0, 0, 4, 16);
+
+    linked = linked->next_item;
+    expect_comment(linked, " comment 2");
+    expect_token_range(linked, 1, 1, 21, 33);
+
+    linked = linked->next_item;
+    expect_comment(linked, "*\n\
+     * This is a simple testing \n\
+     * comment\n\
+     ");
+    expect_token_range(linked, 2, 5, 38, 97);
+
+    btc_tokenizer_destroy(tokenizer);
+}
+
 void test_tokenizer() {
     test_tokenizer_namespace();
     test_tokenizer_simple_container_group();
@@ -369,5 +414,6 @@ void test_tokenizer() {
     test_tokenizer_member_expression();
     test_tokenizer_test_template();
     test_tokenizer_test_comment();
+    test_tokenizer_line_number();
     test_tokenizer_test_ignore_comment();
 }
