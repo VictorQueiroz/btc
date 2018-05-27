@@ -448,3 +448,25 @@ void btc_tokenizer_destroy(btc_tokenizer* tokenizer){
     free(tokenizer->buffer);
     free(tokenizer);
 }
+
+const char* btc_token_type_to_readable(btc_token* token) {
+    if(token == NULL)
+        return "null";
+
+    switch(token->type) {
+        case BTC_TOKEN_PUNCTUATOR:
+            return "punctuator";
+        case BTC_TOKEN_IDENTIFIER:
+            return "identifier";
+        case BTC_TOKEN_KEYWORD:
+            return "keyword";
+        case BTC_TOKEN_LITERAL_STRING:
+            return "literal string";
+        case BTC_TOKEN_COMMENT:
+            return "comment";
+        case BTC_TOKEN_LITERAL_NUMBER:
+            return "literal number";
+    }
+
+    return "unknown";
+}
