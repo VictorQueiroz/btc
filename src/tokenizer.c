@@ -12,6 +12,13 @@ void btc_tokenizer_init(btc_tokenizer** tokenizer_ptr){
     btc_initialize_tokens_list(&(*tokenizer_ptr)->tokens_list);
 }
 
+void btc_tokenizer_slice_string(btc_tokenizer* tokenizer, char** output_ptr, size_t start_offset, size_t end_offset) {
+    const size_t string_length = (end_offset - start_offset);
+    *output_ptr = malloc((string_length * sizeof(char)) + 1);
+    memcpy(*output_ptr, &tokenizer->string[start_offset], string_length);
+    (*output_ptr)[string_length] = '\0';
+} 
+
 void btc_token_init(btc_token** token_ptr, int type){
     *token_ptr = calloc(1, sizeof(btc_token));
 
