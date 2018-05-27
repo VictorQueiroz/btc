@@ -88,7 +88,7 @@ int btc_parser_expect(btc_parser* parser, const char* string) {
         return 0;
 
     if(strncmp(string, token->value, strlen(string)) != 0) {
-        fprintf(stderr, "expected %s but got %s instead\n", string, token->value);
+        fprintf(stderr, "expected \"%s\" in line number %d but got \"%s\" instead\n", string, token->range.start_line_number, token->value);
         return 0;
     }
     return 1;
