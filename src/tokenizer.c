@@ -171,8 +171,8 @@ void btc_tokenizer_scan_keyword(btc_tokenizer* tokenizer) {
 }
 
 int btc_tokenizer_scan_string(btc_tokenizer* tokenizer) {
-    char* mark_initializer = calloc(1, 2*sizeof(char));
-    mark_initializer[0] = tokenizer->string[tokenizer->offset++];
+    char* mark_initializer = malloc(2 * sizeof(char));
+    mark_initializer[0] = tokenizer->string[tokenizer->offset];
     mark_initializer[1] = '\0';
 
     size_t start_offset = tokenizer->offset;
