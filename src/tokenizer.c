@@ -100,10 +100,8 @@ void btc_tokenizer_scan_identifier(btc_tokenizer* tokenizer) {
         return;
     }
 
-    size_t total_characters = (end_offset - start_offset);
-    char* buffer = calloc(1, total_characters*sizeof(char)+1);
-    memcpy(buffer, &tokenizer->string[start_offset], total_characters);
-    buffer[total_characters] = '\0';
+    char* buffer;
+    btc_tokenizer_slice_string(tokenizer, &buffer, start_offset, end_offset);
 
     btc_token* token;
     btc_token_init(&token, BTC_TOKEN_IDENTIFIER);
@@ -121,9 +119,8 @@ int btc_tokenizer_scan_punctuator(btc_tokenizer* tokenizer){
         token->value = "->";
         tokenizer->offset += 2;
     } else {
-        char* buffer = calloc(1, 2*sizeof(char));
-        buffer[0] = tokenizer->string[tokenizer->offset];
-        buffer[1] = '\0';
+        char* buffer;
+        btc_tokenizer_slice_string(tokenizer, &buffer, tokenizer->offset, tokenizer->offset + 1);
 
         token->value = buffer;
         token->allocated = buffer;
@@ -161,10 +158,8 @@ void btc_tokenizer_scan_keyword(btc_tokenizer* tokenizer) {
     if(end_offset == start_offset)
         fprintf(stderr, "unexpected token \"%c\"\n", tokenizer->string[start_offset]);
 
-    size_t characters_length = (end_offset - start_offset)*sizeof(char);
-    char* buffer = malloc(characters_length + 1);
-    strncpy(buffer, &tokenizer->string[start_offset], characters_length);
-    buffer[characters_length] = '\0';
+    char* buffer;
+    btc_tokenizer_slice_string(tokenizer, &buffer, start_offset, end_offset);
 
     btc_token* token;
     btc_token_init(&token, BTC_TOKEN_KEYWORD);
@@ -191,13 +186,11 @@ int btc_tokenizer_scan_string(btc_tokenizer* tokenizer) {
         return BTC_UNEXPECTED_END;
     }
 
-    const size_t end_offset = tokenizer->offset;
-
     ++tokenizer->offset;
 
-    const size_t string_length = end_offset - start_offset;
-    char* output = calloc(1, (string_length*sizeof(char)));
-    memcpy(output, &tokenizer->string[start_offset], string_length);
+    const size_t end_offset = tokenizer->offset;
+    char* output;
+    btc_tokenizer_slice_string(tokenizer, &output, start_offset + 1, end_offset - 1);
 
     btc_token* token;
     btc_token_init(&token, BTC_TOKEN_LITERAL_STRING);
@@ -227,21 +220,21 @@ int btc_tokenizer_check_option(btc_tokenizer* tokenizer, int flag) {
 }
 
 int btc_tokenizer_scan_comment_block(btc_tokenizer* tokenizer, const char* open_comment_token, const char* close_comment_token) {
+    size_t start_offset = tokenizer->offset;
     tokenizer->offset += strlen(open_comment_token);
 
-    size_t start_offset = tokenizer->offset;
 
     while(!btc_tokenizer_compare(tokenizer, close_comment_token)) {
         tokenizer->offset++;
     }
 
-    size_t end_offset = tokenizer->offset;
     tokenizer->offset += strlen(close_comment_token);
 
     if(!btc_tokenizer_check_option(tokenizer, BTC_TOKENIZER_CONFIG_IGNORE_COMMENTS)) {
-        size_t total_characters = end_offset - start_offset;
-        char* comment = calloc(1, (total_characters*sizeof(char)) + 1);
-        memcpy(comment, &tokenizer->string[start_offset], total_characters);
+        const size_t end_offset = tokenizer->offset;
+
+        char* comment;
+        btc_tokenizer_slice_string(tokenizer, &comment, start_offset + strlen(open_comment_token), end_offset - strlen(close_comment_token));
 
         btc_token* token;
         btc_token_init(&token, BTC_TOKEN_COMMENT);
@@ -299,8 +292,8 @@ void btc_tokenizer_scan_number(btc_tokenizer* tokenizer) {
         return;
     }
 
-    char* number_string = calloc(1, sizeof(char)*(end_offset - start_offset)+1);
-    memcpy(number_string, &tokenizer->string[start_offset], end_offset - start_offset);
+    char* number_string;
+    btc_tokenizer_slice_string(tokenizer, &number_string, start_offset, end_offset);
 
     btc_token* token;
     btc_token_init(&token, BTC_TOKEN_LITERAL_NUMBER);
@@ -312,26 +305,26 @@ void btc_tokenizer_scan_number(btc_tokenizer* tokenizer) {
 }
 
 int btc_tokenizer_scan_sl_comment(btc_tokenizer* tokenizer, const char* open_comment_token) {
-    tokenizer->offset += strlen(open_comment_token);
-
     const size_t start_offset = tokenizer->offset;
+
+    tokenizer->offset += strlen(open_comment_token);
 
     while(!ch_is_line_terminator(tokenizer->buffer[tokenizer->offset]))
         ++tokenizer->offset;
 
-    const size_t end_offset = tokenizer->offset;
-    const size_t total_characters = end_offset - start_offset;
-    char* buffer = calloc(1, total_characters + 1);
-    memcpy(buffer, &tokenizer->buffer[start_offset], total_characters);
+    if(!btc_tokenizer_check_option(tokenizer, BTC_TOKENIZER_CONFIG_IGNORE_COMMENTS)) {
+        const size_t end_offset = tokenizer->offset;
 
-    
-    btc_token* token;
-    btc_token_init(&token, BTC_TOKEN_COMMENT);
+        char* buffer;
+        btc_tokenizer_slice_string(tokenizer, &buffer, start_offset + strlen(open_comment_token), end_offset);
 
-    token->value = buffer;
-    token->allocated = buffer;
+        btc_token* token;
+        btc_token_init(&token, BTC_TOKEN_COMMENT);
 
-    btc_tokenizer_push_token(tokenizer, token);
+        token->value = buffer;
+        token->allocated = buffer;
+        btc_tokenizer_push_comment(tokenizer, token);
+    }
 
     return BTC_OK;
 }
