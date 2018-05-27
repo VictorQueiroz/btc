@@ -224,6 +224,7 @@ int btc_tokenizer_check_option(btc_tokenizer* tokenizer, int flag) {
 }
 
 int btc_tokenizer_scan_comment_block(btc_tokenizer* tokenizer, const char* open_comment_token, const char* close_comment_token) {
+    int status = BTC_OK;
     size_t start_offset = tokenizer->offset;
     tokenizer->offset += strlen(open_comment_token);
 
@@ -249,7 +250,7 @@ int btc_tokenizer_scan_comment_block(btc_tokenizer* tokenizer, const char* open_
         btc_tokenizer_push_token(tokenizer, token);
     }
 
-    return BTC_OK;
+    return status;
 }
 
 int btc_tokenizer_is_number_part(btc_tokenizer* tokenizer) {
