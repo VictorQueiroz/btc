@@ -254,7 +254,7 @@ int btc_tokenizer_scan_comment_block(btc_tokenizer* tokenizer, const char* open_
         token->value = comment;
         token->allocated = comment;
 
-        btc_tokenizer_push_token(tokenizer, token);
+        btc_tokenizer_push_comment(tokenizer, token);
     }
 
     return status;
