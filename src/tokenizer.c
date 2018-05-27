@@ -181,6 +181,9 @@ int btc_tokenizer_scan_string(btc_tokenizer* tokenizer) {
 
     const size_t start_offset = tokenizer->offset;
 
+    // skip "
+    tokenizer->offset++;
+
     while(!btc_tokenizer_eof(tokenizer) && !btc_tokenizer_compare(tokenizer, mark_initializer)) {
         ++tokenizer->offset;
     }
