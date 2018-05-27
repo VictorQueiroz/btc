@@ -360,7 +360,8 @@ int btc_tokenizer_identify(btc_tokenizer* tokenizer) {
     return status;
 }
 
-void btc_tokenizer_scan(btc_tokenizer* tokenizer, const char* string) {
+int btc_tokenizer_scan(btc_tokenizer* tokenizer, const char* string) {
+    int status = BTC_OK;
     size_t string_length = strlen(string);
     uint8_t* buffer = calloc(1, string_length*sizeof(char)+1);
     memcpy(buffer, string, string_length);
@@ -369,10 +370,14 @@ void btc_tokenizer_scan(btc_tokenizer* tokenizer, const char* string) {
     tokenizer->buffer = buffer;
     tokenizer->string_length = string_length;
 
-    while(btc_tokenizer_eof(tokenizer) != 1){
-        if(btc_tokenizer_identify(tokenizer) != 0)
+    while(!btc_tokenizer_eof(tokenizer)) {
+        status = btc_tokenizer_identify(tokenizer);
+
+        if(status != BTC_OK)
             break;
     }
+
+    return status;
 }
 
 void btc_tokenizer_destroy(btc_tokenizer* tokenizer){
