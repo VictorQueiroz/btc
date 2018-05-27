@@ -83,7 +83,9 @@ int btc_parser_consume(btc_parser* parser, btc_token** token) {
  */
 int btc_parser_expect(btc_parser* parser, const char* string) {
     btc_token* token;
-    btc_parser_consume(parser, &token);
+
+    if(btc_parser_consume(parser, &token) != BTC_OK)
+        return 0;
 
     if(strncmp(string, token->value, strlen(string)) != 0) {
         fprintf(stderr, "expected %s but got %s instead\n", string, token->value);
