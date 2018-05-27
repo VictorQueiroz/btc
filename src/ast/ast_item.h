@@ -30,6 +30,9 @@ struct _btc_ast_item {
     btc_ast_container_param* container_param;
     btc_import_declaration import_declaration;
     btc_member_expression* member_expression;
+
+    btc_comments_list* trailing_comments;
+    btc_comments_list* leading_comments;
 };
 
 void btc_initialize_ast_item(btc_ast_item** item_ptr);
