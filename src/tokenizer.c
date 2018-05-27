@@ -330,15 +330,16 @@ int btc_tokenizer_scan_sl_comment(btc_tokenizer* tokenizer, const char* open_com
 }
 
 int btc_tokenizer_identify(btc_tokenizer* tokenizer) {
+    int status = BTC_OK;
     uint8_t ch = tokenizer->buffer[tokenizer->offset];
 
     if(ch_is_line_terminator(ch)) {
         ++tokenizer->offset;
         ++tokenizer->line_number;
     } else if(btc_tokenizer_compare(tokenizer, "//")) {
-        btc_tokenizer_scan_sl_comment(tokenizer, "//");
+        status = btc_tokenizer_scan_sl_comment(tokenizer, "//");
     } else if(btc_tokenizer_compare(tokenizer, "/*")) {
-        btc_tokenizer_scan_comment_block(tokenizer, "/*", "*/");
+        status = btc_tokenizer_scan_comment_block(tokenizer, "/*", "*/");
     } else if(btc_tokenizer_is_number_start(tokenizer)) {
         btc_tokenizer_scan_number(tokenizer);
     } else if(btc_tokenizer_is_keyword(tokenizer)) {
@@ -350,13 +351,13 @@ int btc_tokenizer_identify(btc_tokenizer* tokenizer) {
     } else if(ch == 0x20) { // whitespace
         ++tokenizer->offset;
     } else if(btc_tokenizer_is_punctuator(tokenizer)) {
-        return btc_tokenizer_scan_punctuator(tokenizer);
+        status = btc_tokenizer_scan_punctuator(tokenizer);
     } else {
-        fprintf(stderr, "unexpected end of string with \"%c\"\n", tokenizer->string[tokenizer->offset]);
-        return 1;
+        fprintf(stderr, "Unexpected character %c\n", ch);
+        status = BTC_UNEXPECTED_TOKEN;
     }
 
-    return 0;
+    return status;
 }
 
 void btc_tokenizer_scan(btc_tokenizer* tokenizer, const char* string) {
