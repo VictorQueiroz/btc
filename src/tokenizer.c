@@ -179,7 +179,7 @@ int btc_tokenizer_scan_string(btc_tokenizer* tokenizer) {
     mark_initializer[0] = tokenizer->string[tokenizer->offset];
     mark_initializer[1] = '\0';
 
-    size_t start_offset = tokenizer->offset;
+    const size_t start_offset = tokenizer->offset;
 
     while(!btc_tokenizer_eof(tokenizer) && !btc_tokenizer_compare(tokenizer, mark_initializer)) {
         ++tokenizer->offset;
