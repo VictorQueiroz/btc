@@ -128,7 +128,7 @@ int btc_tokenizer_scan_punctuator(btc_tokenizer* tokenizer){
     }
 
     btc_tokenizer_push_token(tokenizer, token);
-    return 0;
+    return BTC_OK;
 }
 
 int btc_tokenizer_is_keyword(btc_tokenizer* tokenizer) {
