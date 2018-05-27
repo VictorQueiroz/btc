@@ -163,7 +163,7 @@ int btc_parser_scan_alias(btc_parser* parser, btc_ast_item* result) {
 }
 
 /**
- * scan ast into `result` 
+ * Scan ast into `result` 
  */
 int btc_parser_scan(btc_parser* parser, btc_ast_item* result) {
     int status = BTC_OK;
