@@ -45,6 +45,8 @@ int ch_is_identifier_start(uint8_t ch) {
         return 1;
     else if(ch >= 0x61 && ch <= 0x7a) // a-z
         return 1;
+    else if(ch == 0x5F) // _
+        return 1;
 
     return 0;
 }
