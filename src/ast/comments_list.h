@@ -19,5 +19,6 @@ struct _btc_comments_list {
 
 void btc_add_comment(btc_comments_list* list, btc_comment comment);
 void btc_initialize_comments_list(btc_comments_list** list_ptr);
+void btc_destroy_comments_list(btc_comments_list* list);
 
 #endif

@@ -21,3 +21,16 @@ void btc_add_comment(btc_comments_list* list, btc_comment comment) {
 
     list->last_item = linked;
 }
+
+void btc_destroy_comments_list(btc_comments_list* list) {
+    btc_linked_comment* comment = list->first_item;
+    btc_linked_comment* previous_comment;
+
+    while(comment) {
+        previous_comment = comment->previous_item;
+        free(comment);
+        comment = previous_comment;
+    }
+
+    free(list);
+}
