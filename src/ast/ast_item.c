@@ -42,6 +42,10 @@ void btc_destroy_ast_item(btc_ast_item* item) {
         default:
             fprintf(stderr, "unrecognized ast item type of %d\n", item->type);
     }
+
+    btc_destroy_comments_list(item->leading_comments);
+    btc_destroy_comments_list(item->trailing_comments);
+
     free(item);
 }
 
