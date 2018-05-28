@@ -404,6 +404,24 @@ void test_tokenizer_line_number() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_tokenizer_identifier() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    assert(btc_tokenizer_scan(tokenizer, "_user _user_ us_er") == BTC_OK);
+
+    btc_linked_token* linked = tokenizer->tokens_list->first_item;
+    expect_identifier(linked, "_user");
+
+    linked = linked->next_item;
+    expect_identifier(linked, "_user_");
+
+    linked = linked->next_item;
+    expect_identifier(linked, "us_er");
+
+    btc_tokenizer_destroy(tokenizer);
+}
+
 void test_tokenizer() {
     test_tokenizer_namespace();
     test_tokenizer_simple_container_group();
@@ -415,5 +433,6 @@ void test_tokenizer() {
     test_tokenizer_test_template();
     test_tokenizer_test_comment();
     test_tokenizer_line_number();
+    test_tokenizer_identifier();
     test_tokenizer_test_ignore_comment();
 }
