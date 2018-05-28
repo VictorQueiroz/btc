@@ -444,6 +444,8 @@ int btc_tokenizer_scan(btc_tokenizer* tokenizer, const char* string) {
 
 void btc_tokenizer_destroy(btc_tokenizer* tokenizer){
     btc_destroy_tokens_list(tokenizer->tokens_list);
+    if(tokenizer->comments_list != NULL)
+        btc_destroy_tokens_list(tokenizer->comments_list);
 
     free(tokenizer->buffer);
     free(tokenizer);
