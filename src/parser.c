@@ -94,7 +94,7 @@ int btc_parser_eof(btc_parser* parser) {
 btc_string btc_consume_string(btc_parser* parser, int* error) {
     btc_token* token;
     btc_parser_consume(parser, &token);
-    btc_string result = {};
+    btc_string result = {0};
 
     if(token->type != BTC_TOKEN_LITERAL_STRING) {
         if(error != NULL) {
