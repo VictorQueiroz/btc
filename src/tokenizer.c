@@ -236,7 +236,7 @@ int btc_tokenizer_scan_comment_block(btc_tokenizer* tokenizer, const char* open_
 
     if(!btc_tokenizer_check_option(tokenizer, BTC_TOKENIZER_CONFIG_IGNORE_COMMENTS)) {
         size_t total_characters = end_offset - start_offset;
-        char* comment = calloc(1, total_characters*sizeof(char));
+        char* comment = calloc(1, (total_characters*sizeof(char)) + 1);
         memcpy(comment, &tokenizer->string[start_offset], total_characters);
 
         btc_token* token;
@@ -317,7 +317,7 @@ int btc_tokenizer_scan_sl_comment(btc_tokenizer* tokenizer, const char* open_com
 
     const size_t end_offset = tokenizer->offset;
     const size_t total_characters = end_offset - start_offset;
-    char* buffer = malloc(sizeof(total_characters));
+    char* buffer = calloc(1, total_characters + 1);
     memcpy(buffer, &tokenizer->buffer[start_offset], total_characters);
 
     btc_token* token;
