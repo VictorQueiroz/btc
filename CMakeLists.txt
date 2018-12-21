@@ -6,8 +6,11 @@ set(CMAKE_C_STANDARD 11)
 add_library(btc src/parser.c
                 src/character.c
                 src/tokenizer.c
+                src/token.c
+                src/tokens_list.c
                 src/ast/ast_item.c
                 src/ast/ast_list.c
+                src/ast/comments_list.c
                 src/ast/container_declaration.c
                 src/ast/container_group.c
                 src/ast/container_param.c
