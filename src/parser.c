@@ -469,15 +469,15 @@ int btc_parser_scan_type_group_definition(btc_parser* parser, btc_ast_item* resu
     int status = BTC_OK;
 
     while(!btc_parser_eof(parser) && !btc_parser_peek(parser, "}")) {
-        btc_ast_item* result;
-        btc_initialize_ast_item(&result);
+        btc_ast_item* output_ast_item = NULL;
+        btc_initialize_ast_item(&output_ast_item);
 
-        status = btc_parser_scan_container_declaration(parser, result);
+        status = btc_parser_scan_container_declaration(parser, output_ast_item);
 
         if(status != BTC_OK)
             return status;
 
-        btc_add_ast_item(group->body, result);
+        btc_add_ast_item(group->body, output_ast_item);
     }
 
     btc_parser_expect(parser, "}");
