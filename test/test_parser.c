@@ -332,6 +332,35 @@ void test_container_alias() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_node_offsets() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "\n\
+        alias Buffer = Vector<Uint8>;\n\
+        alias ObjectId = StrictSize<Buffer, 12>;\n\
+    ");
+
+    btc_parser* parser;
+    btc_parser_init(&parser, tokenizer);
+
+    assert(btc_parse(parser) == BTC_OK);
+
+    btc_ast_item* node = parser->result->data[0];
+    assert(node->range.start_offset == 9);
+    assert(node->range.end_offset == 38);
+    assert(node->range.start_line_number == 1);
+    assert(node->range.end_line_number == 1);
+
+    node = parser->result->data[1];
+    assert(node->range.start_offset == 47);
+    assert(node->range.end_offset == 87);
+    assert(node->range.start_line_number == 2);
+    assert(node->range.end_line_number == 2);
+
+    btc_parser_destroy(parser);
+    btc_tokenizer_destroy(tokenizer);
+}
 void test_parser() {
     test_container_group();
     test_container_alias();
@@ -341,4 +370,5 @@ void test_parser() {
     test_container_param_default();
     test_container_member_expression();
     test_container_namespace();
+    test_node_offsets();
 }

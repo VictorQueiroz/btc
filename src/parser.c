@@ -8,6 +8,28 @@
 #include <stdio.h>
 #include <string.h>
 
+int btc_set_node_end_token(btc_ast_item* node, btc_token* token) {
+    if(token == NULL) {
+        return BTC_UNEXPECTED_TOKEN;
+    }
+
+    node->range.end_line_number = token->range.end_line_number;
+    node->range.end_offset = token->range.end_offset;
+
+    return BTC_OK;
+}
+
+int btc_set_node_start_token(btc_ast_item* node, btc_token* token) {
+    if(token == NULL) {
+        return BTC_UNEXPECTED_TOKEN;
+    }
+
+    node->range.start_line_number = token->range.start_line_number;
+    node->range.start_offset = token->range.start_offset;
+
+    return BTC_OK;
+}
+
 void btc_parser_init(btc_parser** parser_ptr, btc_tokenizer* tokenizer) {
     *parser_ptr = calloc(1, sizeof(btc_parser));
 
@@ -140,6 +162,7 @@ int btc_parser_scan_alias(btc_parser* parser, btc_ast_item* result) {
     btc_initialize_ast_item(&value);
 
     btc_parser_consume(parser, NULL);
+
     btc_ast_identifier name = btc_parser_consume_identifier(parser);
 
     btc_parser_expect(parser, "=");
@@ -160,6 +183,8 @@ int btc_parser_scan_alias(btc_parser* parser, btc_ast_item* result) {
 int btc_parser_scan(btc_parser* parser, btc_ast_item* result) {
     int status = BTC_OK;
 
+    btc_token* token = btc_tokens_list_get(parser->tokens_list, parser->current_token);
+
     if(btc_parser_peek(parser, "alias"))
         status = btc_parser_scan_alias(parser, result);
     else if(btc_parser_peek(parser, "type"))
@@ -168,8 +193,16 @@ int btc_parser_scan(btc_parser* parser, btc_ast_item* result) {
         status = btc_parser_scan_namespace(parser, result);
     else if(btc_parser_peek(parser, "import"))
         status = btc_parser_scan_import(parser, result);
-    else {
+    else
         status = BTC_UNEXPECTED_TOKEN;
+
+    if(status == BTC_OK) {
+        if(token == NULL) {
+            return status;
+        }
+        btc_set_node_start_token(result, token);
+        token = btc_tokens_list_get(parser->tokens_list, parser->current_token-1);
+        btc_set_node_end_token(result, token);
     }
 
     return status;
