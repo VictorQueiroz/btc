@@ -1,5 +1,5 @@
 #include "btc.h"
-#include "tokenizer.h"
+#include "tokenizer/tokenizer.h"
 #include "parser.h"
 #include "ast/container_declaration.h"
 #include "ast/namespace.h"

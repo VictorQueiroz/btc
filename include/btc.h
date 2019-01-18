@@ -22,7 +22,7 @@ extern "C" {
  */
 #define BTC_NO_TOKEN -4
 
-#include "../src/tokenizer.h"
+#include "../src/tokenizer/tokenizer.h"
 #include "../src/parser.h"
 
 #endif

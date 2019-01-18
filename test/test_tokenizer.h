@@ -1,7 +1,7 @@
 #ifndef TEST_TOKENIZER_H_
 #define TEST_TOKENIZER_H_
 
-#include "token.h"
+#include "tokenizer/token.h"
 
 void test_tokenizer();
 

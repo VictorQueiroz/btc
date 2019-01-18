@@ -5,10 +5,10 @@ set(CMAKE_C_STANDARD 11)
 add_subdirectory(deps/cvector)
 
 add_library(btc src/parser.c
-                src/character.c
-                src/tokenizer.c
-                src/token.c
-                src/tokens_list.c
+                src/tokenizer/character.c
+                src/tokenizer/tokenizer.c
+                src/tokenizer/token.c
+                src/tokenizer/tokens_list.c
                 src/ast/ast_item.c
                 src/ast/ast_list.c
                 src/ast/comments_list.c

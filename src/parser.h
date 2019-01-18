@@ -4,11 +4,11 @@
 typedef struct _btc_parser btc_parser;
 
 #include "btc.h"
-#include "tokenizer.h"
+#include "tokenizer/tokenizer.h"
+#include "tokenizer/tokens_list.h"
 #include "ast/ast_item.h"
 #include "ast/container_group.h"
 #include "ast/parser_identifier.h"
-#include "tokens_list.h"
 
 #include <stddef.h>
 

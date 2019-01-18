@@ -1,8 +1,9 @@
+#include "tokenizer/tokenizer.h"
+#include "test_tokenizer.h"
+
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
-#include "tokenizer.h"
-#include "test_tokenizer.h"
 
 void expect_token(btc_token* token, const char* string, int type) {
     if(token->type != type) {

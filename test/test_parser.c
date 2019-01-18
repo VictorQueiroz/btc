@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #include "parser.h"
-#include "tokenizer.h"
+#include "tokenizer/tokenizer.h"
 #include "test_parser.h"
 
 void print_failure(btc_parser* parser, int error) {
