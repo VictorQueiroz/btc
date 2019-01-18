@@ -29,8 +29,6 @@ struct _btc_tokenizer {
 void btc_tokenizer_init(btc_tokenizer** tokenizer);
 int btc_tokenizer_scan(btc_tokenizer* tokenizer, const char* string);
 void btc_tokenizer_destroy(btc_tokenizer* tokenizer);
-int btc_tokenizer_check_option(btc_tokenizer* tokenizer, int flag);
-void btc_tokenizer_set_option(btc_tokenizer* tokenizer, int flag, int on);
 const char* btc_token_type_to_readable(int type);
 
 #endif
