@@ -2,6 +2,7 @@ project(btc)
 cmake_minimum_required(VERSION 3.7.2)
 
 set(CMAKE_C_STANDARD 11)
+add_subdirectory(deps/cvector)
 
 add_library(btc src/parser.c
                 src/character.c
@@ -19,6 +20,7 @@ add_library(btc src/parser.c
                 src/ast/namespace.c
                 src/ast/template.c)
 target_include_directories(btc PRIVATE src)
+target_link_libraries(btc PUBLIC cvector)
 
 add_executable(btc_test test/test.c test/test_parser.c test/test_tokenizer.c)
 target_link_libraries(btc_test PRIVATE btc)
