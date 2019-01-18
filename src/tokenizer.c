@@ -90,7 +90,7 @@ int btc_tokenizer_is_identifier_part(btc_tokenizer* tokenizer) {
 void btc_tokenizer_scan_identifier(btc_tokenizer* tokenizer) {
     size_t start_offset = tokenizer->offset;
 
-    btc_token_range range = {
+    btc_range range = {
         tokenizer->line_number,
         0,
         start_offset,
@@ -135,7 +135,7 @@ int btc_tokenizer_scan_punctuator(btc_tokenizer* tokenizer){
         char* buffer;
         btc_tokenizer_slice_string(tokenizer, &buffer, tokenizer->offset, tokenizer->offset + 1);
 
-        btc_token_range range = {
+        btc_range range = {
             tokenizer->line_number,
             tokenizer->line_number,
             tokenizer->offset,
@@ -187,7 +187,7 @@ void btc_tokenizer_scan_keyword(btc_tokenizer* tokenizer) {
     char* buffer;
     btc_tokenizer_slice_string(tokenizer, &buffer, start_offset, end_offset);
 
-    btc_token_range range = {
+    btc_range range = {
         tokenizer->line_number,
         tokenizer->line_number,
         start_offset,
@@ -210,7 +210,7 @@ int btc_tokenizer_scan_string(btc_tokenizer* tokenizer) {
     mark_initializer[1] = '\0';
 
     const size_t start_offset = tokenizer->offset;
-    btc_token_range range = { tokenizer->line_number, 0, start_offset, 0 };
+    btc_range range = { tokenizer->line_number, 0, start_offset, 0 };
 
     // skip "
     tokenizer->offset++;
@@ -264,7 +264,7 @@ int btc_tokenizer_check_option(btc_tokenizer* tokenizer, int flag) {
 int btc_tokenizer_scan_comment_block(btc_tokenizer* tokenizer, const char* open_comment_token, const char* close_comment_token) {
     int status = BTC_OK;
     size_t start_offset = tokenizer->offset;
-    btc_token_range range = { tokenizer->line_number, 0, start_offset, 0 };
+    btc_range range = { tokenizer->line_number, 0, start_offset, 0 };
 
     tokenizer->offset += strlen(open_comment_token);
 
@@ -328,7 +328,7 @@ int btc_tokenizer_is_number_start(btc_tokenizer* tokenizer){
 
 void btc_tokenizer_scan_number(btc_tokenizer* tokenizer) {
     size_t start_offset = tokenizer->offset;
-    btc_token_range range = { tokenizer->line_number, 0, start_offset, 0 };
+    btc_range range = { tokenizer->line_number, 0, start_offset, 0 };
 
     if(btc_tokenizer_is_number_start(tokenizer))
         ++tokenizer->offset;
@@ -363,7 +363,7 @@ void btc_tokenizer_scan_number(btc_tokenizer* tokenizer) {
 int btc_tokenizer_scan_sl_comment(btc_tokenizer* tokenizer, const char* open_comment_token) {
     const size_t start_offset = tokenizer->offset;
 
-    btc_token_range range = { tokenizer->line_number, 0, start_offset, 0 };
+    btc_range range = { tokenizer->line_number, 0, start_offset, 0 };
     tokenizer->offset += strlen(open_comment_token);
 
     while(!btc_tokenizer_eof(tokenizer) && !ch_is_line_terminator(tokenizer->buffer[tokenizer->offset])) {

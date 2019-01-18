@@ -15,6 +15,7 @@ typedef struct _btc_ast_item btc_ast_item;
 #include "number.h"
 #include "alias.h"
 #include "comments_list.h"
+#include "range.h"
 
 struct _btc_ast_item {
     int type;
@@ -33,6 +34,8 @@ struct _btc_ast_item {
 
     btc_comments_list* trailing_comments;
     btc_comments_list* leading_comments;
+
+    btc_range range;
 };
 
 void btc_initialize_ast_item(btc_ast_item** item_ptr);
