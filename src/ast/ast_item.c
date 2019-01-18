@@ -43,14 +43,14 @@ void btc_destroy_ast_item(btc_ast_item* item) {
             fprintf(stderr, "unrecognized ast item type of %d\n", item->type);
     }
 
-    btc_destroy_comments_list(item->leading_comments);
-    btc_destroy_comments_list(item->trailing_comments);
+    btc_comments_list_free(item->leading_comments);
+    btc_comments_list_free(item->trailing_comments);
 
     free(item);
 }
 
 void btc_initialize_ast_item(btc_ast_item** ast_item_ptr) {
     *ast_item_ptr = calloc(1, sizeof(btc_ast_item));
-    btc_initialize_comments_list(&(*ast_item_ptr)->leading_comments);
-    btc_initialize_comments_list(&(*ast_item_ptr)->trailing_comments);
+    (*ast_item_ptr)->leading_comments = btc_comments_list_alloc();
+    (*ast_item_ptr)->trailing_comments = btc_comments_list_alloc();
 }

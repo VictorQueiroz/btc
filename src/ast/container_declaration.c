@@ -10,11 +10,10 @@ void btc_create_container_declaration(btc_ast_container_declaration** container_
     btc_ast_identifier type = { "" };
 
     container->type = type;
-
-    btc_create_ast_list(&container->body);
+    container->body = btc_ast_list_alloc();
 }
 
 void btc_destroy_container_declaration(btc_ast_container_declaration* container) {
-    btc_destroy_ast_list(container->body);
+    btc_ast_list_free(container->body);
     free(container);
 }

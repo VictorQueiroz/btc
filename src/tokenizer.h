@@ -16,12 +16,9 @@ typedef struct _btc_tokenizer btc_tokenizer;
 #define BTC_TOKEN_COMMENT 5
 #define BTC_TOKEN_LITERAL_NUMBER 6
 
-#define BTC_TOKENIZER_CONFIG_IGNORE_COMMENTS 1
-
 struct _btc_tokenizer {
     int flags;
     btc_tokens_list* tokens_list;
-    btc_tokens_list* comments_list;
     uint8_t* buffer;
     const char* string;
     size_t offset;
@@ -34,6 +31,6 @@ int btc_tokenizer_scan(btc_tokenizer* tokenizer, const char* string);
 void btc_tokenizer_destroy(btc_tokenizer* tokenizer);
 int btc_tokenizer_check_option(btc_tokenizer* tokenizer, int flag);
 void btc_tokenizer_set_option(btc_tokenizer* tokenizer, int flag, int on);
-const char* btc_token_type_to_readable(btc_token* token);
+const char* btc_token_type_to_readable(int type);
 
 #endif

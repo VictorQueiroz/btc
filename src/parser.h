@@ -15,7 +15,8 @@ typedef struct _btc_parser btc_parser;
 struct _btc_parser {
     int status;
     btc_ast_list* result;
-    btc_linked_token* current_token;
+    uint32_t current_token;
+    btc_tokens_list* tokens_list;
 };
 
 int btc_parser_eof(btc_parser* parser);

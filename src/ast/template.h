@@ -5,6 +5,7 @@
 
 typedef struct _btc_template btc_template;
 
+#include "parser_identifier.h"
 #include "ast_list.h"
 
 struct _btc_template {

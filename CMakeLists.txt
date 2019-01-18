@@ -1,5 +1,5 @@
 project(btc)
-cmake_minimum_required(VERSION 3.7.2)
+cmake_minimum_required(VERSION 3.0)
 
 set(CMAKE_C_STANDARD 11)
 add_subdirectory(deps/cvector)
@@ -12,6 +12,7 @@ add_library(btc src/parser.c
                 src/ast/ast_item.c
                 src/ast/ast_list.c
                 src/ast/comments_list.c
+                src/ast/comments_list.h
                 src/ast/container_declaration.c
                 src/ast/container_group.c
                 src/ast/container_param.c
