@@ -253,7 +253,7 @@ void test_tokenizer_test_comment() {
 
     assert(status == BTC_OK);
 
-    btc_tokens_list* tokens_list = tokenizer->tokens_list;
+    btc_tokens_list* tokens_list = tokenizer->comments_list;
     btc_token* token = btc_tokens_list_get(tokens_list, 0);
     expect_comment(token, " one line comment ");
 
@@ -382,7 +382,7 @@ void test_tokenizer_line_number() {
     ");
     assert(status == BTC_OK);
 
-    btc_tokens_list* tokens_list = tokenizer->tokens_list;
+    btc_tokens_list* tokens_list = tokenizer->comments_list;
     btc_token* linked = btc_tokens_list_get(tokens_list, 0);
     expect_comment(linked, " comment 1");
     expect_token_range(linked, 0, 0, 4, 16);

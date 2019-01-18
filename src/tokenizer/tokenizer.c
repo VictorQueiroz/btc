@@ -12,6 +12,7 @@ void btc_tokenizer_init(btc_tokenizer** tokenizer_ptr){
     *tokenizer_ptr = calloc(1, sizeof(btc_tokenizer));
 
     (*tokenizer_ptr)->tokens_list = btc_tokens_list_alloc();
+    (*tokenizer_ptr)->comments_list = btc_tokens_list_alloc();
 }
 
 void btc_tokenizer_slice_string(btc_tokenizer* tokenizer, char** output_ptr, size_t start_offset, size_t end_offset) {
@@ -47,6 +48,10 @@ int btc_tokenizer_compare(btc_tokenizer* tokenizer, const char* token) {
 }
 
 void btc_tokenizer_push_token(btc_tokenizer* tokenizer, btc_token* token) {
+    if(token->type == BTC_TOKEN_COMMENT) {
+        btc_tokens_list_add(tokenizer->comments_list, token);
+        return;
+    }
     btc_tokens_list_add(tokenizer->tokens_list, token);
 }
 
@@ -441,6 +446,7 @@ int btc_tokenizer_scan(btc_tokenizer* tokenizer, const char* string) {
 
 void btc_tokenizer_destroy(btc_tokenizer* tokenizer){
     btc_tokens_list_free(tokenizer->tokens_list);
+    btc_tokens_list_free(tokenizer->comments_list);
     free(tokenizer->buffer);
     free(tokenizer);
 }

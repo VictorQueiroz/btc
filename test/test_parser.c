@@ -379,7 +379,10 @@ void test_container_comments() {
     assert(btc_parse(parser) == BTC_OK);
 
     btc_ast_item* node = parser->result->data[0];
-    assert(node->type == BTC_CONTAINER_DECLARATION);
+    assert(node->type == BTC_CONTAINER_GROUP);
+
+    node = node->container_group->body->data[0];
+    assert(node != NULL);
 
     btc_parser_destroy(parser);
     btc_tokenizer_destroy(tokenizer);
