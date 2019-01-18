@@ -12,6 +12,6 @@ void btc_initialize_namespace(btc_namespace** namespace_ptr) {
 }
 
 void btc_destroy_namespace(btc_namespace* namespace_item) {
-    btc_ast_list_destroy(namespace_item->body);
+    btc_ast_list_free(namespace_item->body);
     free(namespace_item);
 }
