@@ -6,7 +6,7 @@ CVECTOR_NEW(btc_ast_list, btc_ast_item*)
 
 void btc_ast_list_free_items(btc_ast_list* list) {
     vector_foreach(list, i) {
-        btc_destroy_ast_item(CVECTOR_GET(list, i));
+        btc_ast_item_free(CVECTOR_GET(list, i));
     }
 }
 

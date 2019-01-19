@@ -40,6 +40,9 @@ struct _btc_ast_item {
     btc_range range;
 };
 
+void btc_initialize_ast_item(btc_ast_item** ast_item_ptr);
+btc_ast_item* btc_ast_item_alloc();
+void btc_ast_item_free(btc_ast_item*);
 void btc_initialize_ast_item(btc_ast_item** item_ptr);
 void btc_destroy_ast_item(btc_ast_item* item);
 
