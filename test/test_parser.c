@@ -427,6 +427,22 @@ void test_container_comments() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_template_declaration() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "\n\
+        type UserItem_t {\n\
+            template<typename T> UserItem -> /* item id */ int id, /* item type */ T item;\
+        }\n\
+    ");
+
+    btc_parser* parser;
+    btc_parser_init(&parser, tokenizer);
+
+    assert(btc_parse(parser) == BTC_OK);
+}
+
 void test_parser() {
     test_container_group();
     test_container_alias();
@@ -438,4 +454,5 @@ void test_parser() {
     test_container_namespace();
     test_container_comments();
     test_node_offsets();
+    test_template_declaration();
 }
