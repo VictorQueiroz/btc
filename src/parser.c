@@ -104,16 +104,16 @@ int btc_parser_consume(btc_parser* parser, btc_token** token) {
  * return 1 if `string` matches and 0 if no
  */
 int btc_parser_expect(btc_parser* parser, const char* string) {
-    btc_token* token;
+    btc_token* token = NULL;
+    int status = BTC_OK;
 
-    if(btc_parser_consume(parser, &token) != BTC_OK)
-        return 0;
+    status = btc_parser_consume(parser, &token);
+    BTC_PASS_OR_RETURN_ERROR(status)
 
     if(strncmp(string, token->value, strlen(string)) != 0) {
-        fprintf(stderr, "expected \"%s\" in line number %d but got \"%s\" instead\n", string, token->range.start_line_number, token->value);
-        return 0;
+        status = BTC_UNEXPECTED_TOKEN;
     }
-    return 1;
+    return status;
 }
 
 int btc_parser_eof(btc_parser* parser) {
