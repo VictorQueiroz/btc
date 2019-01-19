@@ -177,6 +177,7 @@ int btc_tokenizer_is_keyword(btc_tokenizer* tokenizer) {
     else if(btc_tokenizer_compare(tokenizer, "template"))
         return 1;
     else if(btc_tokenizer_compare(tokenizer, "typename"))
+        return 1;
     return 0;
 }
 
