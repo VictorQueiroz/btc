@@ -458,6 +458,24 @@ void test_template_declaration() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_bodyless_containers() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "\n\
+        type User {\
+            user\
+        }\
+    ");
+
+    btc_parser* parser;
+    btc_parser_init(&parser, tokenizer);
+
+    assert(btc_parse(parser) == BTC_OK);
+
+    btc_parser_destroy(parser);
+}
+
 void test_parser() {
     test_container_group();
     test_container_alias();
@@ -470,4 +488,5 @@ void test_parser() {
     test_container_comments();
     test_node_offsets();
     test_template_declaration();
+    test_bodyless_containers();
 }
