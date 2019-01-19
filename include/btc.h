@@ -22,8 +22,6 @@ extern "C" {
  */
 #define BTC_NO_TOKEN -4
 
-#define BTC_TEMPLATE_DECLARATION 14
-
 #include "../src/tokenizer/tokenizer.h"
 #include "../src/parser.h"
 

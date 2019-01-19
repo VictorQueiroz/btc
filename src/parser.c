@@ -126,7 +126,6 @@ btc_string btc_consume_string(btc_parser* parser, int* error) {
     btc_string result = {0};
 
     if(token->type != BTC_TOKEN_LITERAL_STRING) {
-        fprintf(stderr, "Expected literal string but got %s instead\n", btc_token_type_to_readable(token));
         if(error != NULL) {
             *error = BTC_UNEXPECTED_TOKEN;
         }

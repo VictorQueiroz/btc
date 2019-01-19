@@ -3,7 +3,7 @@
 
 #define BTC_PASS_OR_RETURN_ERROR(expr) \
     if(expr != BTC_OK) {\
-        fprintf(stderr, "failure at %s in line %d\n", __PRETTY_FUNCTION__, __LINE__);\
+        fprintf(stderr, "failure at %s in line %d\n", __FILE__, __LINE__);\
         return expr;\
     }
 
