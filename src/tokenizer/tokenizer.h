@@ -7,6 +7,7 @@ typedef struct _btc_tokenizer btc_tokenizer;
 #include "btc.h"
 #include <stdint.h>
 #include <stddef.h>
+#include "tokens_list.h"
 
 #define BTC_TOKEN_PUNCTUATOR 1
 #define BTC_TOKEN_IDENTIFIER 2
@@ -15,23 +16,10 @@ typedef struct _btc_tokenizer btc_tokenizer;
 #define BTC_TOKEN_COMMENT 5
 #define BTC_TOKEN_LITERAL_NUMBER 6
 
-#define BTC_TOKENIZER_CONFIG_IGNORE_COMMENTS 1
-
-struct _btc_token {
-    int type;
-
-    const char* value;
-    char* allocated;
-    double number;
-
-    struct _btc_token* next_token;
-    struct _btc_token* previous_token;
-};
-
 struct _btc_tokenizer {
     int flags;
-    btc_token* first_token;
-    btc_token* last_token;
+    btc_tokens_list* tokens_list;
+    btc_tokens_list* comments_list;
     uint8_t* buffer;
     const char* string;
     size_t offset;
@@ -40,9 +28,8 @@ struct _btc_tokenizer {
 };
 
 void btc_tokenizer_init(btc_tokenizer** tokenizer);
-void btc_tokenizer_scan(btc_tokenizer* tokenizer, const char* string);
+int btc_tokenizer_scan(btc_tokenizer* tokenizer, const char* string);
 void btc_tokenizer_destroy(btc_tokenizer* tokenizer);
-int btc_tokenizer_check_option(btc_tokenizer* tokenizer, int flag);
-void btc_tokenizer_set_option(btc_tokenizer* tokenizer, int flag, int on);
+const char* btc_token_type_to_readable(int type);
 
 #endif

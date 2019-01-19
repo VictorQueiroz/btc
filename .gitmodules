@@ -1,0 +1,3 @@
+[submodule "deps/cvector"]
+	path = deps/cvector
+	url = https://github.com/VictorQueiroz/cvector

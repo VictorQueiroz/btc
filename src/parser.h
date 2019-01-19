@@ -4,15 +4,20 @@
 typedef struct _btc_parser btc_parser;
 
 #include "btc.h"
-#include "tokenizer.h"
+#include "tokenizer/tokenizer.h"
+#include "tokenizer/tokens_list.h"
 #include "ast/ast_item.h"
 #include "ast/container_group.h"
 #include "ast/parser_identifier.h"
 
+#include <stddef.h>
+
 struct _btc_parser {
     int status;
     btc_ast_list* result;
-    btc_token* current_token;
+    uint32_t current_token;
+    btc_tokens_list* tokens_list;
+    btc_tokens_list* comments_list;
 };
 
 int btc_parser_eof(btc_parser* parser);

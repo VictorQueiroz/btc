@@ -2,6 +2,6 @@
 #include "test_tokenizer.h"
 
 int main() {
-    test_parser();
     test_tokenizer();
+    test_parser();
 }
