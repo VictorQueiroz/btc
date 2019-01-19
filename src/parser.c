@@ -162,14 +162,15 @@ int btc_parser_scan_import(btc_parser* parser, btc_ast_item* result) {
 }
 
 int btc_parser_scan_alias(btc_parser* parser, btc_ast_item* result) {
-    int status = BTC_OK;
-
     btc_ast_item* value;
     btc_initialize_ast_item(&value);
 
-    btc_parser_consume(parser, NULL);
+    int status = btc_parser_consume(parser, NULL);
+    BTC_PASS_OR_RETURN_ERROR(status)
 
-    btc_ast_identifier name = btc_parser_consume_identifier(parser);
+    btc_ast_identifier name;
+    status = btc_parser_consume_identifier(parser, &name);
+    BTC_PASS_OR_RETURN_ERROR(status)
 
     btc_parser_expect(parser, "=");
     btc_parser_scan_param_type(parser, value);
@@ -187,8 +188,7 @@ int btc_parser_scan_alias(btc_parser* parser, btc_ast_item* result) {
  * Scan ast into `result` 
  */
 int btc_parser_scan(btc_parser* parser, btc_ast_item* result) {
-    int status = BTC_OK;
-
+    int status;
     btc_token* token = btc_tokens_list_get(parser->tokens_list, parser->current_token);
 
     if(btc_parser_peek(parser, "alias"))
@@ -215,21 +215,21 @@ int btc_parser_scan(btc_parser* parser, btc_ast_item* result) {
 }
 
 int btc_parser_scan_namespace(btc_parser* parser, btc_ast_item* ast_item) {
-    btc_parser_consume(parser, NULL);
-    btc_ast_identifier name = btc_parser_consume_identifier(parser);
-
-    if(!btc_parser_expect(parser, "{"))
-        return BTC_OK;
+    int status = btc_parser_expect(parser, "namespace");
+    BTC_PASS_OR_RETURN_ERROR(status)
 
     btc_namespace* namespace_item;
     btc_initialize_namespace(&namespace_item);
 
-    namespace_item->name = name;
+    status = btc_parser_consume_identifier(parser, &namespace_item->name);
+    BTC_PASS_OR_RETURN_ERROR(status)
+
+    if(!btc_parser_expect(parser, "{"))
+        return BTC_OK;
 
     ast_item->type = BTC_NAMESPACE;
     ast_item->namespace_item = namespace_item;
 
-    int status = BTC_OK;
     btc_ast_item* result;
 
     while(!btc_parser_peek_and_consume(parser, "}")) {
@@ -249,17 +249,17 @@ int btc_parser_scan_namespace(btc_parser* parser, btc_ast_item* ast_item) {
 }
 
 // TODO: find a way to return an error in case no identifier is find
-btc_ast_identifier btc_parser_consume_identifier(btc_parser* parser) {
-    btc_token* token;
-    btc_parser_consume(parser, &token);
+int btc_parser_consume_identifier(btc_parser* parser, btc_ast_identifier* identifier) {
+    btc_token* token = NULL;
+    BTC_PASS_OR_RETURN_ERROR(btc_parser_consume(parser, &token))
 
     if(token->type != BTC_TOKEN_IDENTIFIER) {
-        fprintf(stderr, "expected identifier but got \"%s\" instead\n", token->value);
+        return BTC_UNEXPECTED_TOKEN;
     }
 
-    btc_ast_identifier identifier = { token->value };
+    *identifier = (btc_ast_identifier) { .value = token->value };
 
-    return identifier;
+    return BTC_OK;
 }
 
 /**
@@ -279,7 +279,8 @@ int btc_parser_scan_member_expression(btc_parser* parser, btc_ast_item* output) 
     btc_initialize_ast_item(&left);
 
     left->type = BTC_IDENTIFIER;
-    left->identifier = btc_parser_consume_identifier(parser);
+    int status = btc_parser_consume_identifier(parser, &left->identifier);
+    BTC_PASS_OR_RETURN_ERROR(status)
 
     btc_member_expression* expr = NULL;
     while(!btc_parser_eof(parser) && btc_parser_peek_and_consume(parser, ".")) {
@@ -287,7 +288,8 @@ int btc_parser_scan_member_expression(btc_parser* parser, btc_ast_item* output) 
 
         btc_destroy_ast_item(expr->left);
         expr->left = left;
-        expr->right = btc_parser_consume_identifier(parser);
+        status = btc_parser_consume_identifier(parser, &expr->right);
+        BTC_PASS_OR_BREAK(status)
 
         if(!btc_parser_peek(parser, ".")) {
             output->type = BTC_MEMBER_EXPRESSION;
@@ -302,17 +304,18 @@ int btc_parser_scan_member_expression(btc_parser* parser, btc_ast_item* output) 
         left = next;
     }
 
-    return BTC_OK;
+    return status;
 }
 
-void btc_parser_scan_template(btc_parser* parser, btc_ast_item* result) {
-    btc_ast_identifier name = btc_parser_consume_identifier(parser);
+int btc_parser_scan_template(btc_parser* parser, btc_ast_item* result) {
     btc_template* template_item;
     btc_initialize_template(&template_item);
 
-    template_item->name = name;
+    int status = btc_parser_consume_identifier(parser, &template_item->name);
+    BTC_PASS_OR_RETURN_ERROR(status)
 
-    btc_parser_expect(parser, "<");
+    status = btc_parser_expect(parser, "<");
+    BTC_PASS_OR_RETURN_ERROR(status)
 
     while(btc_parser_peek_and_consume(parser, ",") || !btc_parser_peek_and_consume(parser, ">")) {
         btc_ast_item* argument;
@@ -326,19 +329,19 @@ void btc_parser_scan_template(btc_parser* parser, btc_ast_item* result) {
 
     result->type = BTC_TEMPLATE;
     result->template_item = template_item;
+
+    return BTC_OK;
 }
 
-void btc_parser_scan_param_type(btc_parser* parser, btc_ast_item* result) {
+int btc_parser_scan_param_type(btc_parser* parser, btc_ast_item* result) {
     if(btc_parser_peek_from_index(parser, ".", 1)) {
-        btc_parser_scan_member_expression(parser, result);
-        return;
+        return btc_parser_scan_member_expression(parser, result);
     } else if(btc_parser_peek_from_index(parser, "<", 1)) {
-        btc_parser_scan_template(parser, result);
-        return;
+        return btc_parser_scan_template(parser, result);
     }
 
     result->type = BTC_IDENTIFIER;
-    result->identifier = btc_parser_consume_identifier(parser);
+    return btc_parser_consume_identifier(parser, &result->identifier);
 }
 
 int btc_parser_scan_container_short_param(btc_parser* parser, btc_ast_item* body) {
@@ -348,15 +351,18 @@ int btc_parser_scan_container_short_param(btc_parser* parser, btc_ast_item* body
     body->type = BTC_CONTAINER_PARAM;
     body->container_param = param;
 
+    int status;
+
     btc_parser_scan_param_type(parser, param->type);
 
-    param->name = btc_parser_consume_identifier(parser);
+    status = btc_parser_consume_identifier(parser, &param->name);
+    BTC_PASS_OR_RETURN_ERROR(status)
 
-    return BTC_OK;
+    return status;
 }
 
 int btc_parser_scan_container_short_body(btc_parser* parser, btc_ast_list* body) {
-    int status = BTC_OK;
+    int status;
     btc_token* token = NULL;
 
     do {
@@ -423,7 +429,7 @@ int btc_parser_scan_container_param(btc_parser* parser, btc_ast_item* result) {
 
     btc_parser_scan_param_type(parser, param->type);
 
-    param->name = btc_parser_consume_identifier(parser);
+    btc_parser_consume_identifier(parser, &param->name);
 
     if(btc_parser_peek_and_consume(parser, "=")) {
         btc_initialize_ast_item(&param->default_value);
@@ -549,12 +555,15 @@ int btc_parser_scan_type_group_definition(btc_parser* parser, btc_ast_item* resu
     btc_ast_container_group_declaration* group;
     btc_create_container_group(&group);
 
-    int status = BTC_OK;
+    result->type = BTC_CONTAINER_GROUP;
+    result->container_group = group;
 
-    status = btc_parser_consume(parser, NULL);
+    int status = btc_parser_consume(parser, NULL);
     BTC_PASS_OR_RETURN_ERROR(status)
 
-    group->type = btc_parser_consume_identifier(parser);
+    status = btc_parser_consume_identifier(parser, &group->type);
+    BTC_PASS_OR_RETURN_ERROR(status)
+
     status = btc_parser_expect(parser, "{");
     BTC_PASS_OR_RETURN_ERROR(status)
 
@@ -571,7 +580,6 @@ int btc_parser_scan_type_group_definition(btc_parser* parser, btc_ast_item* resu
         } else {
             status = btc_parser_scan_container_declaration(parser, output_ast_item);
         }
-        BTC_PASS_OR_BREAK(status)
 
         if(status != BTC_OK) {
             btc_destroy_ast_item(output_ast_item);
@@ -585,9 +593,6 @@ int btc_parser_scan_type_group_definition(btc_parser* parser, btc_ast_item* resu
     }
 
     BTC_PASS_OR_RETURN_ERROR(btc_parser_expect(parser, "}"));
-
-    result->type = BTC_CONTAINER_GROUP;
-    result->container_group = group;
 
     return status;
 }
