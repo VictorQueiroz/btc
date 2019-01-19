@@ -46,7 +46,7 @@ void expect_literal_string(btc_token* token, const char* string) {
     expect_token(token, string, BTC_TOKEN_LITERAL_STRING);
 }
 
-void expect_comment(btc_token* token, const char* string){
+static void expect_comment(btc_token* token, const char* string){
     expect_token(token, string, BTC_TOKEN_COMMENT);
 }
 

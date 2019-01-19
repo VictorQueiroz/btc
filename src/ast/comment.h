@@ -7,4 +7,7 @@ struct _btc_comment {
     const char* value;
 };
 
+btc_comment* btc_comment_alloc();
+void btc_comment_free(btc_comment*);
+
 #endif

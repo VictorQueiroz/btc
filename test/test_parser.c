@@ -362,15 +362,37 @@ void test_node_offsets() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+int compare_strings(char* c1, char* c2) {
+    if(strlen(c1) != strlen(c2)) {
+        return 0;
+    }
+    if(strncmp(c1, c2, strlen(c1)) == 0) {
+        return 1;
+    }
+    return 0;
+}
+
+void expect_comment(btc_comments_list* list, size_t i, const char* comment) {
+    int result = compare_strings((char*)list->data[i]->value, (char*)comment);
+    if(result != 1) {
+        fprintf(stderr, "comparison failed %s != %s\n", comment, list->data[i]->value);
+    }
+    assert(result == 1);
+}
+
 void test_container_comments() {
     btc_tokenizer* tokenizer;
     btc_tokenizer_init(&tokenizer);
 
     btc_tokenizer_scan(tokenizer, "\n\
+        /* user container group */\
         type User {\n\
             /* user container */\n\
-            user -> string id;\n\
+            user -> /* user id */ string id, /* after user id */\n\
+                    /* user name */ string name /* after user name */;\n\
+            // after user container\n\
         }\n\
+        // after user container group\n\
     ");
 
     btc_parser* parser;
@@ -380,9 +402,26 @@ void test_container_comments() {
 
     btc_ast_item* node = parser->result->data[0];
     assert(node->type == BTC_CONTAINER_GROUP);
+    assert(node->leading_comments->offset == 1);
+    expect_comment(node->leading_comments, 0, " user container group ");
+    expect_comment(node->trailing_comments, 0, " after user container group");
 
     node = node->container_group->body->data[0];
-    assert(node != NULL);
+    assert(node->leading_comments->offset == 1);
+    expect_comment(node->leading_comments, 0, " user container ");
+    expect_comment(node->trailing_comments, 0, " after user container");
+
+    btc_ast_list* container_params = node->container->body;
+    assert(container_params->data[0]->leading_comments->offset == 1);
+    expect_comment(container_params->data[0]->leading_comments, 0, " user id ");
+    expect_comment(container_params->data[0]->trailing_comments, 0, " after user id ");
+
+    assert(container_params->data[1]->leading_comments->offset == 2);
+    expect_comment(container_params->data[1]->leading_comments, 0, " after user id ");
+    expect_comment(container_params->data[1]->leading_comments, 1, " user name ");
+
+    assert(container_params->data[1]->trailing_comments->offset == 1);
+    expect_comment(container_params->data[1]->trailing_comments, 0, " after user name ");
 
     btc_parser_destroy(parser);
     btc_tokenizer_destroy(tokenizer);

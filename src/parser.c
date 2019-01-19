@@ -8,6 +8,14 @@
 #include <stdio.h>
 #include <string.h>
 
+int btc_parser_get_last_token(btc_parser* parser, btc_token** token) {
+    if(token == NULL) {
+        return BTC_UNEXPECTED_TOKEN;
+    }
+    *token = btc_tokens_list_get(parser->tokens_list, parser->current_token - 1);
+    return BTC_OK;
+}
+
 int btc_set_node_end_token(btc_ast_item* node, btc_token* token) {
     if(token == NULL) {
         return BTC_UNEXPECTED_TOKEN;
@@ -38,6 +46,7 @@ void btc_parser_init(btc_parser** parser_ptr, btc_tokenizer* tokenizer) {
     parser->result = btc_ast_list_alloc();
     parser->status = BTC_OK;
     parser->tokens_list = tokenizer->tokens_list;
+    parser->comments_list = tokenizer->comments_list;
 }
 
 void btc_parser_get_token(btc_parser* parser, btc_token** token_output) {
@@ -351,18 +360,27 @@ int btc_parser_scan_container_short_param(btc_parser* parser, btc_ast_item* body
 
 int btc_parser_scan_container_short_body(btc_parser* parser, btc_ast_list* body) {
     int status = BTC_OK;
+    btc_token* token = NULL;
 
-    do {        
+    do {
         btc_ast_item* param;
         btc_initialize_ast_item(&param);
 
+        btc_parser_get_token(parser, &token);
+        status = btc_set_node_start_token(param, token);
+        BTC_PASS_OR_BREAK(status)
+
         status = btc_parser_scan_container_short_param(parser, param);
-        BTC_PASS_OR_RETURN_ERROR(status)
+        BTC_PASS_OR_BREAK(status)
+
+        btc_parser_get_last_token(parser, &token);
+        status = btc_set_node_end_token(param, token);
+        BTC_PASS_OR_BREAK(status)
 
         btc_ast_list_add(body, param);
     } while(!btc_parser_eof(parser) && btc_parser_peek_and_consume(parser, ","));
 
-    return BTC_OK;
+    return status;
 }
 
 /**
@@ -414,9 +432,7 @@ int btc_parser_scan_container_param(btc_parser* parser, btc_ast_item* result) {
         btc_initialize_ast_item(&param->default_value);
 
         status = btc_parser_scan_literal_expression(parser, param->default_value);
-
-        if(status != BTC_OK)
-            return status;
+        BTC_PASS_OR_RETURN_ERROR(status)
     }
 
     if(btc_parser_peek_and_consume(parser, ";") != 1) {
@@ -435,11 +451,19 @@ int btc_parser_scan_full_container_body(btc_parser* parser, btc_ast_list* params
     if(!btc_parser_expect(parser, "{"))
         return BTC_UNEXPECTED_TOKEN;
 
+    btc_token* token = NULL;
+    btc_ast_item* param = NULL;
+
     while(!btc_parser_peek_and_consume(parser, "}")) {
-        btc_ast_item* param;
         btc_initialize_ast_item(&param);
 
+        btc_parser_get_token(parser, &token);
+        btc_set_node_start_token(param, token);
+
         status = btc_parser_scan_container_param(parser, param);
+
+        btc_parser_get_last_token(parser, &token);
+        btc_set_node_end_token(param, token);
 
         btc_ast_list_add(params, param);
     }
@@ -457,7 +481,6 @@ int btc_parser_scan_container_body(btc_parser* parser, btc_ast_list* params) {
         btc_parser_peek_and_consume(parser, ";");
     } else if(btc_parser_peek(parser, "{")) {
         status = btc_parser_scan_full_container_body(parser, params);
-
         BTC_PASS_OR_RETURN_ERROR(status);
     }
 
@@ -471,11 +494,11 @@ int btc_parser_scan_container_declaration(btc_parser* parser, btc_ast_item* resu
     result->type = BTC_CONTAINER_DECLARATION;
     result->container = container;
 
-    btc_ast_identifier container_name = btc_parser_consume_identifier(parser);
+    btc_token* token = NULL;
+    BTC_PASS_OR_RETURN_ERROR(btc_parser_consume(parser, &token));
+    container->name = (btc_ast_identifier) { .value = token->value };
 
     BTC_PASS_OR_RETURN_ERROR(btc_parser_scan_container_body(parser, container->body));
-
-    container->name = container_name;
 
     return BTC_OK;
 }
@@ -494,8 +517,12 @@ int btc_parser_scan_type_group_definition(btc_parser* parser, btc_ast_item* resu
     BTC_PASS_OR_RETURN_ERROR(status)
 
     btc_ast_item* output_ast_item = NULL;
+    btc_token* token = NULL;
     while(!btc_parser_eof(parser) && !btc_parser_peek(parser, "}")) {
         btc_initialize_ast_item(&output_ast_item);
+
+        btc_parser_get_token(parser, &token);
+        btc_set_node_start_token(output_ast_item, token);
 
         status = btc_parser_scan_container_declaration(parser, output_ast_item);
 
@@ -503,6 +530,9 @@ int btc_parser_scan_type_group_definition(btc_parser* parser, btc_ast_item* resu
             btc_destroy_ast_item(output_ast_item);
         }
         BTC_PASS_OR_RETURN_ERROR(status)
+
+        btc_parser_get_last_token(parser, &token);
+        btc_set_node_end_token(output_ast_item, token);
 
         btc_ast_list_add(group->body, output_ast_item);
     }
@@ -512,6 +542,77 @@ int btc_parser_scan_type_group_definition(btc_parser* parser, btc_ast_item* resu
     result->type = BTC_CONTAINER_GROUP;
     result->container_group = group;
 
+    return status;
+}
+
+int btc_parser_attach_comments(btc_parser* parser, btc_ast_list* list, btc_ast_item* parent_node) {
+    btc_ast_item* item = NULL;
+    btc_token* comment = NULL;
+    btc_ast_item* previous_node = NULL;
+    int status = BTC_OK;
+
+    /**
+     * Should be set to true when comment is beyond the start offset of parent node
+     * or end offset of previous node.
+     *
+     * We want to be able to get comments that are inside parent node and avoid comments that are
+     * before previous node. Comments that are present before previous node must be processed by
+     * them as trailing comments.
+     */
+    int inside_parent_or_after_last_node = 0;
+
+    vector_foreach(list, j) {
+        item = btc_ast_list_get(list, j);
+        previous_node = j == 0 ? NULL : btc_ast_list_get(list,j-1);
+        vector_foreach(parser->comments_list, i) {
+            comment = btc_tokens_list_get(parser->comments_list, i);
+            if(previous_node == NULL) {
+                if(parent_node != NULL) {
+                    inside_parent_or_after_last_node = comment->range.start_offset >= parent_node->range.start_offset;
+                } else {
+                    inside_parent_or_after_last_node = 1;
+                }
+            } else {
+                inside_parent_or_after_last_node = comment->range.start_offset >= previous_node->range.end_offset;
+            }
+            if(!inside_parent_or_after_last_node) {
+                continue;
+            }
+            if(comment->range.end_offset <= item->range.start_offset) {
+                btc_comment* leading_comment = btc_comment_alloc();
+                leading_comment->value = comment->value;
+                btc_comments_list_add(item->leading_comments, leading_comment);
+            }
+            if(comment->range.start_offset >= item->range.end_offset && (parent_node == NULL ? 1 : comment->range.start_offset <= parent_node->range.end_offset)) {
+                btc_comment* trailing_comment = btc_comment_alloc();
+                trailing_comment->value = comment->value;
+                btc_comments_list_add(item->trailing_comments, trailing_comment);
+            }
+        }
+        switch(item->type) {
+            case BTC_CONTAINER_GROUP:
+                status = btc_parser_attach_comments(parser, item->container_group->body, item);
+                break;
+            case BTC_CONTAINER_DECLARATION:
+                status = btc_parser_attach_comments(parser, item->container->body, item);
+                break;
+            case BTC_NAMESPACE:
+                status = btc_parser_attach_comments(parser, item->namespace_item->body, item);
+                break;
+            case BTC_TEMPLATE:
+                status = btc_parser_attach_comments(parser, item->template_item->arguments, item);
+                break;
+            case BTC_ALIAS:
+            case BTC_IDENTIFIER:
+            case BTC_MEMBER_EXPRESSION:
+            case BTC_CONTAINER_PARAM:
+                break;
+            default:
+                fprintf(stderr, "received unhandled ast item: %d\n", item->type);
+                return BTC_UNEXPECTED_TOKEN;
+        }
+        BTC_PASS_OR_BREAK(status);
+    }
     return status;
 }
 
@@ -534,5 +635,8 @@ int btc_parse(btc_parser* parser) {
 
         btc_ast_list_add(parser->result, result);
     }
+
+    btc_parser_attach_comments(parser, parser->result, NULL);
+
     return status;
 }

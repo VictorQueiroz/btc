@@ -17,6 +17,7 @@ struct _btc_parser {
     btc_ast_list* result;
     uint32_t current_token;
     btc_tokens_list* tokens_list;
+    btc_tokens_list* comments_list;
 };
 
 int btc_parser_eof(btc_parser* parser);
