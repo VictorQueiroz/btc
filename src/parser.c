@@ -503,6 +503,13 @@ int btc_parser_scan_container_declaration(btc_parser* parser, btc_ast_item* resu
     return BTC_OK;
 }
 
+int btc_parser_scan_template_declaration(btc_parser* parser, btc_ast_item* node) {
+    btc_parser_expect(parser, "typename");
+
+    btc_token* token = NULL;
+    btc_parser_consume(parser, &token);
+}
+
 int btc_parser_scan_type_group_definition(btc_parser* parser, btc_ast_item* result) {
     btc_ast_container_group_declaration* group;
     btc_create_container_group(&group);
@@ -524,7 +531,11 @@ int btc_parser_scan_type_group_definition(btc_parser* parser, btc_ast_item* resu
         btc_parser_get_token(parser, &token);
         btc_set_node_start_token(output_ast_item, token);
 
-        status = btc_parser_scan_container_declaration(parser, output_ast_item);
+        if(btc_parser_peek(parser, "template")) {
+            status = btc_parser_scan_template_declaration(parser, output_ast_item);
+        } else {
+            status = btc_parser_scan_container_declaration(parser, output_ast_item);
+        }
 
         if(status != BTC_OK) {
             btc_destroy_ast_item(output_ast_item);
