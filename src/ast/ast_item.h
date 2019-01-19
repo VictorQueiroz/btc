@@ -16,6 +16,7 @@ typedef struct _btc_ast_item btc_ast_item;
 #include "alias.h"
 #include "comments_list.h"
 #include "range.h"
+#include "template_declaration.h"
 
 struct _btc_ast_item {
     int type;
@@ -31,6 +32,7 @@ struct _btc_ast_item {
     btc_ast_container_param* container_param;
     btc_import_declaration import_declaration;
     btc_member_expression* member_expression;
+    btc_template_declaration* template_declaration;
 
     btc_comments_list* trailing_comments;
     btc_comments_list* leading_comments;
