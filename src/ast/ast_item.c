@@ -34,6 +34,9 @@ void btc_destroy_ast_item(btc_ast_item* item) {
         case BTC_CONTAINER_PARAM:
             btc_destroy_container_param(item->container_param);
             break;
+        case BTC_TEMPLATE_DECLARATION:
+            btc_template_declaration_free(item->template_declaration);
+            break;
         case BTC_IMPORT_DECLARATION:
         case BTC_IDENTIFIER:
         case BTC_NUMBER:
@@ -50,7 +53,16 @@ void btc_destroy_ast_item(btc_ast_item* item) {
 }
 
 void btc_initialize_ast_item(btc_ast_item** ast_item_ptr) {
-    *ast_item_ptr = calloc(1, sizeof(btc_ast_item));
-    (*ast_item_ptr)->leading_comments = btc_comments_list_alloc();
-    (*ast_item_ptr)->trailing_comments = btc_comments_list_alloc();
+    *ast_item_ptr = btc_ast_item_alloc();
+}
+
+btc_ast_item* btc_ast_item_alloc() {
+    btc_ast_item* node = calloc(1, sizeof(btc_ast_item));
+    node->leading_comments = btc_comments_list_alloc();
+    node->trailing_comments = btc_comments_list_alloc();
+    return node;
+}
+
+void btc_ast_item_free(btc_ast_item* node) {
+    btc_destroy_ast_item(node);
 }

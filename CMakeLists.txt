@@ -19,7 +19,7 @@ add_library(btc src/parser.c
                 src/ast/containers_list.c
                 src/ast/member_expression.c
                 src/ast/namespace.c
-                src/ast/template.c src/range.h src/ast/comment.c)
+                src/ast/template.c src/range.h src/ast/comment.c src/ast/template_declaration.h src/ast/template_declaration.c)
 target_include_directories(btc PRIVATE src)
 target_link_libraries(btc PUBLIC cvector)
 

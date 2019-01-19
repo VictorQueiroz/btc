@@ -427,6 +427,37 @@ void test_container_comments() {
     btc_tokenizer_destroy(tokenizer);
 }
 
+void test_template_declaration() {
+    btc_tokenizer* tokenizer;
+    btc_tokenizer_init(&tokenizer);
+
+    btc_tokenizer_scan(tokenizer, "\n\
+        type UserItem_t {\n\
+            template<typename T, typename B>\n\n\
+            UserItem -> /* item id */ int id, /* item type */ T itemA, B itemB;\
+        }\n\
+    ");
+
+    btc_parser* parser;
+    btc_parser_init(&parser, tokenizer);
+
+    assert(btc_parse(parser) == BTC_OK);
+
+    btc_ast_item* node = parser->result->data[0]->container_group->body->data[0];
+    btc_template_declaration* template_decl = node->template_declaration;
+    assert(compare_strings((char*)template_decl->arguments->data[0]->identifier.value, "T"));
+    assert(compare_strings((char*)template_decl->arguments->data[1]->identifier.value, "B"));
+
+    node = template_decl->body;
+    btc_ast_list* params = node->container->body;
+    assert(compare_strings((char*) params->data[0]->container_param->name.value, "id"));
+    assert(compare_strings((char*) params->data[1]->container_param->name.value, "itemA"));
+    assert(compare_strings((char*) params->data[2]->container_param->name.value, "itemB"));
+
+    btc_parser_destroy(parser);
+    btc_tokenizer_destroy(tokenizer);
+}
+
 void test_parser() {
     test_container_group();
     test_container_alias();
@@ -438,4 +469,5 @@ void test_parser() {
     test_container_namespace();
     test_container_comments();
     test_node_offsets();
+    test_template_declaration();
 }
