@@ -2,7 +2,7 @@
 #include "ast_list.h"
 #include "ast_item.h"
 
-#include <malloc.h>
+#include <stdlib.h>
 
 #define BTC_RETURN_IF_NULL(expression) if(expression == NULL) return NULL;
 

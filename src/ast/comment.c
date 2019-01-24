@@ -1,6 +1,6 @@
 #include "comment.h"
 
-#include <malloc.h>
+#include <stdlib.h>
 
 btc_comment* btc_comment_alloc() {
     btc_comment* comment = malloc(sizeof(btc_comment)*1);
