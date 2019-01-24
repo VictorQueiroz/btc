@@ -1,4 +1,5 @@
 build/
+.history/
 
 # idea files
 .idea/**/workspace.xml
