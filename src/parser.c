@@ -631,13 +631,11 @@ int btc_parser_attach_comments(btc_parser* parser, btc_ast_list* list, btc_ast_i
                 continue;
             }
             if(comment->range.end_offset <= item->range.start_offset) {
-                btc_comment* leading_comment = btc_comment_alloc();
-                leading_comment->value = comment->value;
+                btc_comment* leading_comment = btc_create_comment_from_token(comment);
                 btc_comments_list_add(item->leading_comments, leading_comment);
             }
             if(comment->range.start_offset >= item->range.end_offset && (parent_node == NULL ? 1 : comment->range.start_offset <= parent_node->range.end_offset)) {
-                btc_comment* trailing_comment = btc_comment_alloc();
-                trailing_comment->value = comment->value;
+                btc_comment* trailing_comment = btc_create_comment_from_token(comment);
                 btc_comments_list_add(item->trailing_comments, trailing_comment);
             }
         }
