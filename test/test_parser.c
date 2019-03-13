@@ -473,6 +473,7 @@ void test_bodyless_containers() {
 
     assert(btc_parse(parser) == BTC_OK);
 
+    btc_tokenizer_destroy(tokenizer);
     btc_parser_destroy(parser);
 }
 
