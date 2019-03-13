@@ -48,7 +48,7 @@ int btc_tokenizer_compare(btc_tokenizer* tokenizer, const char* token) {
 }
 
 void btc_tokenizer_push_token(btc_tokenizer* tokenizer, btc_token* token) {
-    if(token->type == BTC_TOKEN_COMMENT) {
+    if(token->type == BTC_TOKEN_SINGLE_LINE_COMMENT || token->type == BTC_TOKEN_MULTI_LINE_COMMENT) {
         btc_tokens_list_add(tokenizer->comments_list, token);
         return;
     }
@@ -297,7 +297,7 @@ int btc_tokenizer_scan_comment_block(btc_tokenizer* tokenizer, const char* open_
     range.end_offset = end_offset;
 
     btc_token* token;
-    btc_token_init(&token, BTC_TOKEN_COMMENT);
+    btc_token_init(&token, BTC_TOKEN_MULTI_LINE_COMMENT);
 
     token->range = range;
     token->value = comment;
@@ -385,7 +385,7 @@ int btc_tokenizer_scan_sl_comment(btc_tokenizer* tokenizer, const char* open_com
     btc_tokenizer_slice_string(tokenizer, &buffer, start_offset + strlen(open_comment_token), end_offset);
 
     btc_token* token;
-    btc_token_init(&token, BTC_TOKEN_COMMENT);
+    btc_token_init(&token, BTC_TOKEN_SINGLE_LINE_COMMENT);
 
     range.end_offset = end_offset;
     range.end_line_number = tokenizer->line_number;
@@ -465,7 +465,8 @@ const char* btc_token_type_to_readable(int type) {
             return "keyword";
         case BTC_TOKEN_LITERAL_STRING:
             return "literal string";
-        case BTC_TOKEN_COMMENT:
+        case BTC_TOKEN_SINGLE_LINE_COMMENT:
+        case BTC_TOKEN_MULTI_LINE_COMMENT:
             return "comment";
         case BTC_TOKEN_LITERAL_NUMBER:
             return "literal number";

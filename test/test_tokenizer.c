@@ -46,8 +46,8 @@ void expect_literal_string(btc_token* token, const char* string) {
     expect_token(token, string, BTC_TOKEN_LITERAL_STRING);
 }
 
-static void expect_comment(btc_token* token, const char* string){
-    expect_token(token, string, BTC_TOKEN_COMMENT);
+static void expect_comment(btc_token* token, const char* string, uint8_t single_line_comment){
+    expect_token(token, string, single_line_comment == 1 ? BTC_TOKEN_SINGLE_LINE_COMMENT : BTC_TOKEN_MULTI_LINE_COMMENT);
 }
 
 void expect_number(btc_token* token, double number) {
@@ -255,15 +255,15 @@ void test_tokenizer_test_comment() {
 
     btc_tokens_list* tokens_list = tokenizer->comments_list;
     btc_token* token = btc_tokens_list_get(tokens_list, 0);
-    expect_comment(token, " one line comment ");
+    expect_comment(token, " one line comment ", 1);
 
     token = btc_tokens_list_get(tokens_list, 1);
     expect_comment(token, "*\
      * test comment \
-     ");
+     ", 0);
 
     token = btc_tokens_list_get(tokens_list, 2);
-    expect_comment(token, " last one line comment ");
+    expect_comment(token, " last one line comment ", 1);
 
     btc_tokenizer_destroy(tokenizer);
 }
@@ -384,18 +384,18 @@ void test_tokenizer_line_number() {
 
     btc_tokens_list* tokens_list = tokenizer->comments_list;
     btc_token* linked = btc_tokens_list_get(tokens_list, 0);
-    expect_comment(linked, " comment 1");
+    expect_comment(linked, " comment 1", 1);
     expect_token_range(linked, 0, 0, 4, 16);
 
     linked = btc_tokens_list_get(tokens_list, 1);
-    expect_comment(linked, " comment 2");
+    expect_comment(linked, " comment 2", 1);
     expect_token_range(linked, 1, 1, 21, 33);
 
     linked = btc_tokens_list_get(tokens_list, 2);
     expect_comment(linked, "*\n\
      * This is a simple testing \n\
      * comment\n\
-     ");
+     ", 0);
     expect_token_range(linked, 2, 5, 38, 97);
 
     btc_tokenizer_destroy(tokenizer);

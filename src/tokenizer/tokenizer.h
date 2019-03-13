@@ -13,8 +13,9 @@ typedef struct _btc_tokenizer btc_tokenizer;
 #define BTC_TOKEN_IDENTIFIER 2
 #define BTC_TOKEN_KEYWORD 3
 #define BTC_TOKEN_LITERAL_STRING 4
-#define BTC_TOKEN_COMMENT 5
-#define BTC_TOKEN_LITERAL_NUMBER 6
+#define BTC_TOKEN_SINGLE_LINE_COMMENT 5
+#define BTC_TOKEN_MULTI_LINE_COMMENT 6
+#define BTC_TOKEN_LITERAL_NUMBER 7
 
 struct _btc_tokenizer {
     int flags;
