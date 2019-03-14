@@ -659,6 +659,7 @@ int btc_parser_attach_comments(btc_parser* parser, btc_ast_list* list, btc_ast_i
             case BTC_IDENTIFIER:
             case BTC_MEMBER_EXPRESSION:
             case BTC_CONTAINER_PARAM:
+            case BTC_IMPORT_DECLARATION:
                 break;
             default:
                 fprintf(stderr, "received unhandled ast item: %d\n", item->type);
