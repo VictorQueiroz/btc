@@ -4,6 +4,7 @@
 #include "parser.h"
 
 void test_parser();
-void expect_ast_identifier(btc_ast_item* item, const char* name);
+void expect_ast_identifier(btc_ast_item*, const char*);
+void expect_comment(btc_comments_list*, size_t, const char*);
 
 #endif

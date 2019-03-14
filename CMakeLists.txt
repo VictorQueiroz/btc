@@ -24,7 +24,7 @@ target_include_directories(btc PRIVATE src)
 target_link_libraries(btc PUBLIC cvector)
 target_compile_options(btc PRIVATE -Wall -Wextra -pedantic)
 
-add_executable(btc_test test/test.c test/test_parser.c test/test_tokenizer.c)
+add_executable(btc_test test/test.c test/test_parser.c test/test_tokenizer.c test/test_parser_comments.c test/test_parser_comments.h)
 target_link_libraries(btc_test PRIVATE btc)
 target_include_directories(btc_test PRIVATE src)
 

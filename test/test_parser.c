@@ -1,10 +1,11 @@
-#include <assert.h>
-#include <string.h>
-#include <stdio.h>
-
 #include "parser.h"
 #include "tokenizer/tokenizer.h"
 #include "test_parser.h"
+#include "test_parser_comments.h"
+
+#include <assert.h>
+#include <string.h>
+#include <stdio.h>
 
 void print_failure(btc_parser* parser, int error) {
     btc_token* token = btc_tokens_list_get(parser->tokens_list, parser->current_token);
@@ -490,4 +491,5 @@ void test_parser() {
     test_node_offsets();
     test_template_declaration();
     test_bodyless_containers();
+    test_parser_comments();
 }
