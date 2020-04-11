@@ -19,10 +19,14 @@ add_library(btc src/parser.c
                 src/ast/containers_list.c
                 src/ast/member_expression.c
                 src/ast/namespace.c
-                src/ast/template.c src/range.h src/ast/comment.c src/ast/template_declaration.h src/ast/template_declaration.c)
+                src/ast/template.c
+                src/range.h
+                src/ast/comment.c
+                src/ast/template_declaration.h
+                src/ast/template_declaration.c)
 target_include_directories(btc PRIVATE src)
 target_link_libraries(btc PUBLIC cvector)
-target_compile_options(btc PRIVATE -Wall -Wextra -pedantic)
+target_compile_options(btc PRIVATE -Wall -Wextra -Werror -pedantic -Wfatal-errors)
 
 add_executable(btc_test test/test.c test/test_parser.c test/test_tokenizer.c test/test_parser_comments.c test/test_parser_comments.h)
 target_link_libraries(btc_test PRIVATE btc)
